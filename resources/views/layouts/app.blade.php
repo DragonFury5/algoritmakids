@@ -1,85 +1,39 @@
-<div>
-    {{-- Trigger button --}}
-    <button wire:click="openModal" class="btn-kid bg-kid-coral text-lg">
-        + {{ app()->getLocale() === 'id' ? 'Tambah Anak' : 'Add Child' }}
-    </button>
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config('app.name', 'AlgoritmaKids') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+</head>
+<body class="bg-kid-bg font-kid text-kid-text antialiased min-h-screen">
 
-    {{-- Success message --}}
-    @if (session()->has('success'))
-        <div class="mt-4 bg-kid-mint/50 text-kid-text rounded-kid p-4">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    {{-- Modal --}}
-    @if ($showModal)
-        <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
-             wire:click.self="closeModal">
-            <div class="bg-white rounded-kid shadow-2xl w-full max-w-md p-8">
-
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-extrabold">
-                        {{ app()->getLocale() === 'id' ? 'Tambah Akun Anak' : 'Add Child Account' }}
-                    </h2>
-                    <button wire:click="closeModal" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">&times;</button>
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+            <a href="{{ route('home') }}" class="text-xl font-extrabold text-kid-blue">
+                Algoritma<span class="text-kid-coral">Kids</span>
+            </a>
+            <div class="flex items-center gap-4 text-sm">
+                <div class="flex gap-1 bg-kid-bg rounded-full p-1">
+                    <a href="{{ route('lang.switch', 'id') }}"
+                       class="px-3 py-1 rounded-full {{ app()->getLocale() === 'id' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">ID</a>
+                    <a href="{{ route('lang.switch', 'en') }}"
+                       class="px-3 py-1 rounded-full {{ app()->getLocale() === 'en' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">EN</a>
                 </div>
-
-                <form wire:submit="save" class="space-y-4">
-
-                    <div>
-                        <label class="block font-semibold mb-1">
-                            {{ app()->getLocale() === 'id' ? 'Nama Anak' : 'Child\'s Name' }}
-                        </label>
-                        <input type="text" wire:model="name"
-                               class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
-                        @error('name') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold mb-1">Email</label>
-                        <input type="email" wire:model="email"
-                               class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
-                        @error('email') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold mb-1">
-                            {{ app()->getLocale() === 'id' ? 'Kata Sandi' : 'Password' }}
-                        </label>
-                        <input type="password" wire:model="password"
-                               class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
-                        @error('password') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold mb-2">
-                            {{ app()->getLocale() === 'id' ? 'Avatar' : 'Avatar' }}
-                        </label>
-                        <div class="flex flex-wrap gap-3">
-                            @foreach(['robot-blue','robot-green','robot-yellow','robot-coral','robot-purple','robot-mint'] as $a)
-                                <button type="button" wire:click="$set('avatar', '{{ $a }}')"
-                                    class="w-12 h-12 rounded-full border-4 transition
-                                           {{ $avatar === $a ? 'border-kid-blue scale-110' : 'border-transparent' }}"
-                                    style="background-color: {{ ['robot-blue' => '#7EC8E3','robot-green' => '#A8E6CF','robot-yellow' => '#FFD97D','robot-coral' => '#FF8B94','robot-purple' => '#B39DDB','robot-mint' => '#B8E0D2'][$a] }}">
-                                </button>
-                            @endforeach
-                        </div>
-                        @error('avatar') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="flex gap-3 pt-2">
-                        <button type="button" wire:click="closeModal"
-                                class="flex-1 rounded-kid px-4 py-3 font-bold bg-gray-200 text-gray-700">
-                            {{ app()->getLocale() === 'id' ? 'Batal' : 'Cancel' }}
-                        </button>
-                        <button type="submit" class="flex-1 rounded-kid px-4 py-3 font-bold bg-kid-blue text-white">
-                            {{ app()->getLocale() === 'id' ? 'Simpan' : 'Save' }}
-                        </button>
-                    </div>
-
+                <span class="hidden md:inline text-gray-500">{{ auth()->user()->name }}</span>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="text-kid-coral font-bold hover:underline">{{ __('ui.logout') }}</button>
                 </form>
-
             </div>
         </div>
-    @endif
-</div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-10">
+        {{ $slot }}
+    </main>
+
+    @livewireScripts
+</body>
+</html>

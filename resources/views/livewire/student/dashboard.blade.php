@@ -38,9 +38,17 @@
                     <p class="text-xs text-gray-400 mb-4">
                         {{ $module->levels->count() }} {{ app()->getLocale() === 'id' ? 'level' : 'levels' }}
                     </p>
-                    <button class="btn-kid bg-kid-blue w-full" disabled>
-                        {{ app()->getLocale() === 'id' ? 'Segera Hadir' : 'Coming Soon' }}
-                    </button>
+                    @php $firstLevel = $module->levels->first(); @endphp
+@if($firstLevel)
+    <a href="{{ route('play', $firstLevel) }}"
+       class="btn-kid bg-kid-blue text-white w-full">
+        {{ app()->getLocale() === 'id' ? 'Mulai' : 'Start' }}
+    </a>
+@else
+    <button class="btn-kid bg-gray-300 text-white w-full" disabled>
+        {{ app()->getLocale() === 'id' ? 'Segera Hadir' : 'Coming Soon' }}
+    </button>
+@endif
                 </div>
             @endforeach
         </div>
