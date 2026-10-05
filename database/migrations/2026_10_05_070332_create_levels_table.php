@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('levels', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('module_id')->constrained()->cascadeOnDelete();
+            $table->string('slug');
+            $table->string('title_en');
+            $table->string('title_id');
+            $table->text('instructions_en');
+            $table->text('instructions_id');
+            $table->enum('game_type', ['robot_path', 'pattern_fixer']);
+            $table->json('game_data');
+            $table->integer('order')->default(0);
+            $table->timestamps();
+            $table->unique(['module_id', 'slug']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('levels');
+    }
+};
