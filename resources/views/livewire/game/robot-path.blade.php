@@ -19,12 +19,13 @@
 
         {{-- Grid area --}}
         <div class="bg-white rounded-kid shadow-md p-4">
-            <div class="relative mx-auto"
-                 :style="`width: ${width * cell}px; height: ${height * cell}px;`"
-                 style="background-color: #F7FBFF; background-image:
-                    linear-gradient(to right, #E5E7EB 1px, transparent 1px),
-                    linear-gradient(to bottom, #E5E7EB 1px, transparent 1px);
-                    background-size: 64px 64px;">
+      <div class="relative mx-auto"
+     :style="`width: ${width * cell}px; height: ${height * cell}px;
+              background-color: #F7FBFF;
+              background-image:
+                linear-gradient(to right, #64748B 1px, transparent 1px),
+                linear-gradient(to bottom, #64748B 1px, transparent 1px);
+              background-size: ${cell}px ${cell}px;`">
 
                 {{-- Walls --}}
                 <template x-for="wall in walls" :key="wall">
