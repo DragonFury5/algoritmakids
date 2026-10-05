@@ -4,12 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Nunito', sans-serif;
-  background-color: #F7FBFF;
-  color: #2E3A59;
+@layer base {
+    body {
+        font-family: 'Nunito', sans-serif;
+        background-color: #F7FBFF;
+        color: #2E3A59;
+    }
 }
 
-.btn-kid {
-  @apply rounded-kid px-6 py-3 font-bold text-white shadow-md transition active:scale-95;
+@layer components {
+    .btn-kid {
+        @apply inline-flex items-center justify-center rounded-kid px-6 py-3 font-bold shadow-md transition active:scale-95;
+    }
 }
