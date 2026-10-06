@@ -1,4 +1,3 @@
-
 document.addEventListener('alpine:init', () => {
     Alpine.data('robotGame', (config) => ({
         width: config.width,
@@ -7,14 +6,48 @@ document.addEventListener('alpine:init', () => {
         goal: config.goal,
         walls: config.walls.map(w => w[0] + ',' + w[1]),
         maxBlocks: config.max_blocks || 20,
+        allowLoops: config.allow_loops || false,
+        levelId: config.level_id,
 
         robot: { x: config.start.x, y: config.start.y, dir: config.start.dir },
         program: [],
+        focusedContainer: 'main',
         running: false,
         won: false,
         message: '',
         messageType: '',
         starsEarned: 0,
+
+        init() {
+            this.restoreProgress();
+            this.$watch('program', () => this.saveProgress(), { deep: true });
+        },
+
+        saveProgress() {
+            try {
+                localStorage.setItem('robotPath:' + this.levelId, JSON.stringify({
+                    program: this.program,
+                    focusedContainer: this.focusedContainer,
+                }));
+            } catch (e) {}
+        },
+
+        restoreProgress() {
+            try {
+                const saved = localStorage.getItem('robotPath:' + this.levelId);
+                if (! saved) return;
+                const data = JSON.parse(saved);
+                const program = Array.isArray(data) ? data : data.program;
+                if (Array.isArray(program)) {
+                    this.program = program.filter(b => b && b.type);
+                }
+                if (data.focusedContainer) this.focusedContainer = data.focusedContainer;
+            } catch (e) {}
+        },
+
+        clearSaved() {
+            try { localStorage.removeItem('robotPath:' + this.levelId); } catch (e) {}
+        },
 
         get cell() { return 64; },
 
@@ -29,23 +62,67 @@ document.addEventListener('alpine:init', () => {
 
         isWall(x, y) { return this.walls.includes(x + ',' + y); },
 
+        getCurrentContainer() {
+            if (this.focusedContainer === 'main') return this.program;
+            const idx = parseInt(this.focusedContainer);
+            if (this.program[idx] && this.program[idx].type === 'loop') {
+                return this.program[idx].body;
+            }
+            return this.program;
+        },
+
         addBlock(type) {
             if (this.running || this.won) return;
-            if (this.program.length >= this.maxBlocks) return;
-            this.program.push({ type });
+
+            if (type === 'loop') {
+                if (! this.allowLoops) return;
+                if (this.focusedContainer !== 'main') {
+                    this.message = 'Loops can only go in the main program.';
+                    this.messageType = 'error';
+                    return;
+                }
+                if (this.program.length >= this.maxBlocks) return;
+                this.program.push({ type: 'loop', count: 2, body: [] });
+                return;
+            }
+
+            const container = this.getCurrentContainer();
+            if (container.length >= this.maxBlocks) return;
+            container.push({ type });
         },
 
         removeBlock(i) {
             if (this.running) return;
             this.program.splice(i, 1);
+            if (this.focusedContainer !== 'main' && ! this.program[parseInt(this.focusedContainer)]) {
+                this.focusedContainer = 'main';
+            }
         },
+
+        removeLoopBlock(loopIdx, i) {
+            if (this.running) return;
+            const loop = this.program[loopIdx];
+            if (loop && loop.body) loop.body.splice(i, 1);
+        },
+
+        setLoopCount(loopIdx, delta) {
+            if (this.running || this.won) return;
+            const loop = this.program[loopIdx];
+            if (! loop) return;
+            loop.count = Math.max(1, Math.min(10, (loop.count || 2) + delta));
+        },
+
+        focusMain() { if (! this.running) this.focusedContainer = 'main'; },
+        focusLoop(i) { if (! this.running) this.focusedContainer = String(i); },
 
         clearProgram() {
             if (this.running) return;
             this.program = [];
+            this.focusedContainer = 'main';
             this.reset();
             this.message = '';
             this.messageType = '';
+            this.clearSaved();
         },
 
         reset() {
@@ -53,6 +130,28 @@ document.addEventListener('alpine:init', () => {
         },
 
         sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
+
+        flatten(program) {
+            const out = [];
+            for (const block of program) {
+                if (block.type === 'loop') {
+                    const times = Math.max(1, Math.min(10, block.count || 1));
+                    for (let i = 0; i < times; i++) out.push(...block.body);
+                } else {
+                    out.push(block);
+                }
+            }
+            return out;
+        },
+
+        countWrittenBlocks(program) {
+            let n = 0;
+            for (const b of program) {
+                n++;
+                if (b.type === 'loop' && Array.isArray(b.body)) n += b.body.length;
+            }
+            return n;
+        },
 
         async run() {
             if (this.running || this.won) return;
@@ -67,7 +166,9 @@ document.addEventListener('alpine:init', () => {
             this.message = '';
             this.messageType = '';
 
-            for (const block of this.program) {
+            const flat = this.flatten(this.program);
+
+            for (const block of flat) {
                 const ok = await this.execute(block);
                 if (! ok) {
                     this.message = 'Oops! The robot hit a wall.';
@@ -76,10 +177,13 @@ document.addEventListener('alpine:init', () => {
                     return;
                 }
                 if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
-                    this.starsEarned = this.program.length <= this.maxBlocks - 3 ? 3 : 2;
+                    const written = this.countWrittenBlocks(this.program);
+                    const ratio = written / this.maxBlocks;
+                    this.starsEarned = ratio <= 0.5 ? 3 : (ratio <= 0.75 ? 2 : 1);
                     this.won = true;
                     this.running = false;
                     this.message = '';
+                    this.clearSaved();
                     await this.$wire.completeLevel(this.starsEarned);
                     return;
                 }

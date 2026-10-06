@@ -61,11 +61,18 @@
                     <a href="{{ route('login') }}" class="btn-kid bg-white text-kid-blue border-2 border-kid-blue">
                         {{ __('ui.hero_cta_secondary') }}
                     </a>
-                @else
-                    <a href="{{ route('parent.dashboard') }}" class="btn-kid bg-kid-coral text-lg">
-                        {{ __('ui.hero_cta') }}
-                    </a>
-                @endguest
+            @else
+    @php
+        $dashRoute = auth()->user()->isAdmin()
+            ? route('admin.dashboard')
+            : (auth()->user()->isParent()
+                ? route('parent.dashboard')
+                : route('student.dashboard'));
+    @endphp
+    <a href="{{ $dashRoute }}" class="btn-kid bg-kid-coral text-lg text-white">
+        {{ __('ui.hero_cta') }}
+    </a>
+@endguest
             </div>
         </div>
 
