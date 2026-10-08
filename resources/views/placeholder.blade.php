@@ -10,7 +10,7 @@
     <p class="mt-4">Logged in as: <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->role }})</p>
     <form method="POST" action="{{ route('logout') }}" class="mt-6">
         @csrf
-        <button class="btn-kid bg-kid-coral">Log out</button>
+        <button class="btn-kid bg-kid-teal">Log out</button>
     </form>
 </body>
 </html>

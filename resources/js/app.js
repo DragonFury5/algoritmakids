@@ -14,8 +14,8 @@ document.addEventListener('alpine:init', () => {
         focusedContainer: 'main',
         running: false,
         won: false,
-        message: '',
-        messageType: '',
+        showWinModal: false,
+        showFailModal: false,
         starsEarned: 0,
 
         init() {
@@ -77,8 +77,7 @@ document.addEventListener('alpine:init', () => {
             if (type === 'loop') {
                 if (! this.allowLoops) return;
                 if (this.focusedContainer !== 'main') {
-                    this.message = 'Loops can only go in the main program.';
-                    this.messageType = 'error';
+                    this.showFailModal = true;
                     return;
                 }
                 if (this.program.length >= this.maxBlocks) return;
@@ -120,13 +119,20 @@ document.addEventListener('alpine:init', () => {
             this.program = [];
             this.focusedContainer = 'main';
             this.reset();
-            this.message = '';
-            this.messageType = '';
             this.clearSaved();
         },
 
         reset() {
             this.robot = { x: this.start.x, y: this.start.y, dir: this.start.dir };
+        },
+
+        dismissWin() {
+            this.showWinModal = false;
+        },
+
+        dismissFail() {
+            this.showFailModal = false;
+            this.reset();
         },
 
         sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
@@ -156,24 +162,22 @@ document.addEventListener('alpine:init', () => {
         async run() {
             if (this.running || this.won) return;
             if (this.program.length === 0) {
-                this.message = 'Add some blocks first!';
-                this.messageType = 'error';
+                this.showFailModal = true;
                 return;
             }
 
             this.running = true;
             this.reset();
-            this.message = '';
-            this.messageType = '';
+            this.showWinModal = false;
+            this.showFailModal = false;
 
             const flat = this.flatten(this.program);
 
             for (const block of flat) {
                 const ok = await this.execute(block);
                 if (! ok) {
-                    this.message = 'Oops! The robot hit a wall.';
-                    this.messageType = 'error';
                     this.running = false;
+                    this.showFailModal = true;
                     return;
                 }
                 if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
@@ -182,16 +186,15 @@ document.addEventListener('alpine:init', () => {
                     this.starsEarned = ratio <= 0.5 ? 3 : (ratio <= 0.75 ? 2 : 1);
                     this.won = true;
                     this.running = false;
-                    this.message = '';
                     this.clearSaved();
                     await this.$wire.completeLevel(this.starsEarned);
+                    this.showWinModal = true;
                     return;
                 }
             }
 
-            this.message = 'The robot didn\'t reach the flag. Try again!';
-            this.messageType = 'error';
             this.running = false;
+            this.showFailModal = true;
         },
 
         async execute(block) {

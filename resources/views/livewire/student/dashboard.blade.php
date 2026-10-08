@@ -1,7 +1,7 @@
 <div>
     <div class="bg-white rounded-kid shadow-md p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-            <div class="w-16 h-16 rounded-full bg-kid-blue flex items-center justify-center text-3xl">🤖</div>
+            <div class="w-16 h-16 rounded-full bg-kid-teal flex items-center justify-center text-3xl">🤖</div>
             <div>
                 <h1 class="text-2xl font-extrabold">
                     {{ app()->getLocale() === 'id' ? 'Hai' : 'Hi' }}, {{ auth()->user()->name }}!
@@ -41,7 +41,7 @@
                     @php $firstLevel = $module->levels->first(); @endphp
 @if($firstLevel)
     <a href="{{ route('play', $firstLevel) }}"
-       class="btn-kid bg-kid-blue text-white w-full">
+       class="btn-kid bg-kid-teal text-white w-full">
         {{ app()->getLocale() === 'id' ? 'Mulai' : 'Start' }}
     </a>
 @else

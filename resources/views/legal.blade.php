@@ -7,7 +7,7 @@
 </head>
 <body class="bg-kid-bg font-kid text-kid-text">
     <div class="max-w-3xl mx-auto py-12 px-6">
-        <a href="{{ route('home') }}" class="text-kid-blue font-bold">← {{ app()->getLocale() === 'id' ? 'Kembali' : 'Back' }}</a>
+        <a href="{{ route('home') }}" class="text-kid-coral font-bold">← {{ app()->getLocale() === 'id' ? 'Kembali' : 'Back' }}</a>
         <h1 class="text-3xl font-extrabold mt-6 mb-4">
             {{ app()->getLocale() === 'id' ? 'Kebijakan Privasi' : 'Privacy Policy' }}
         </h1>

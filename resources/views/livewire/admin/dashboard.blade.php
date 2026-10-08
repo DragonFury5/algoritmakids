@@ -8,7 +8,7 @@
 
     <div class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white rounded-kid shadow-md p-6 text-center">
-            <div class="text-4xl font-extrabold text-kid-blue">{{ $totalParents }}</div>
+            <div class="text-4xl font-extrabold text-kid-coral">{{ $totalParents }}</div>
             <div class="text-gray-500">{{ app()->getLocale() === 'id' ? 'Orang Tua' : 'Parents' }}</div>
         </div>
         <div class="bg-white rounded-kid shadow-md p-6 text-center">
@@ -22,10 +22,10 @@
     </div>
 
     @if(session()->has('success'))
-        <div class="mb-4 bg-kid-mint/50 rounded-kid p-4">{{ session('success') }}</div>
+        <div class="mb-4 bg-kid-teal/50 rounded-kid p-4">{{ session('success') }}</div>
     @endif
     @if(session()->has('error'))
-        <div class="mb-4 bg-kid-coral/30 rounded-kid p-4">{{ session('error') }}</div>
+        <div class="mb-4 bg-kid-teal/30 rounded-kid p-4">{{ session('error') }}</div>
     @endif
 
     <div class="bg-white rounded-kid shadow-md overflow-hidden">
@@ -46,7 +46,7 @@
                         <td class="p-4 text-gray-600">{{ $user->email }}</td>
                         <td class="p-4">
                             <span class="px-3 py-1 rounded-full text-xs font-bold
-                                {{ $user->isAdmin() ? 'bg-kid-purple/30' : ($user->isParent() ? 'bg-kid-blue/30' : 'bg-kid-mint/50') }}">
+                                {{ $user->isAdmin() ? 'bg-kid-purple/30' : ($user->isParent() ? 'bg-kid-teal/30' : 'bg-kid-teal/50') }}">
                                 {{ $user->role }}
                             </span>
                         </td>

@@ -15,7 +15,7 @@
             <div>
                 <label class="block font-semibold mb-1">Email</label>
                 <input type="email" wire:model="email"
-                       class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
+                       class="w-full rounded-kid border-gray-300 focus:border-kid-coral focus:ring-kid-coral">
                 @error('email') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
             </div>
 
@@ -24,16 +24,16 @@
                     {{ app()->getLocale() === 'id' ? 'Kata Sandi' : 'Password' }}
                 </label>
                 <input type="password" wire:model="password"
-                       class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
+                       class="w-full rounded-kid border-gray-300 focus:border-kid-coral focus:ring-kid-coral">
                 @error('password') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
             </div>
 
             <label class="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="checkbox" wire:model="remember" class="rounded text-kid-blue">
+                <input type="checkbox" wire:model="remember" class="rounded text-kid-coral">
                 {{ app()->getLocale() === 'id' ? 'Ingat saya' : 'Remember me' }}
             </label>
 
-            <button type="submit" class="btn-kid bg-kid-blue w-full text-lg">
+            <button type="submit" class="btn-kid bg-kid-teal w-full text-lg">
                 {{ app()->getLocale() === 'id' ? 'Masuk' : 'Log In' }}
             </button>
 
@@ -41,7 +41,7 @@
 
         <p class="text-center mt-6 text-gray-600">
             {{ app()->getLocale() === 'id' ? 'Belum punya akun?' : 'Don\'t have an account?' }}
-            <a href="{{ route('register') }}" class="text-kid-blue font-bold underline">
+            <a href="{{ route('register') }}" class="text-kid-coral font-bold underline">
                 {{ app()->getLocale() === 'id' ? 'Daftar' : 'Sign Up' }}
             </a>
         </p>

@@ -11,7 +11,7 @@
      })">
 
     <div class="mb-4">
-        <a href="{{ route('student.dashboard') }}" class="text-kid-blue font-bold">← {{ __('ui.dashboard') }}</a>
+        <a href="{{ route('student.dashboard') }}" class="text-kid-coral font-bold">← {{ __('ui.dashboard') }}</a>
         <h1 class="text-2xl md:text-3xl font-extrabold mt-2">{{ $level->title }}</h1>
         <p class="text-gray-600 mt-1">{{ $level->instructions }}</p>
     </div>
@@ -47,15 +47,27 @@
                     <div class="w-full h-full transition-transform duration-200"
                          :style="robotRotation">
                         <svg viewBox="0 0 64 64" class="w-full h-full">
-                            <rect x="14" y="16" width="36" height="34" rx="10" fill="#7EC8E3"/>
-                            <circle cx="25" cy="30" r="4" fill="white"/>
-                            <circle cx="39" cy="30" r="4" fill="white"/>
-                            <circle cx="25" cy="30" r="2" fill="#2E3A59"/>
-                            <circle cx="39" cy="30" r="2" fill="#2E3A59"/>
-                            <rect x="24" y="40" width="16" height="3" rx="1.5" fill="#2E3A59"/>
-                            <line x1="32" y1="16" x2="32" y2="6" stroke="#2E3A59" stroke-width="2"/>
+                            {{-- Direction arrow: big, bright, obvious --}}
+                            <polygon points="62,32 46,20 46,44"
+                                     fill="#FFD97D"
+                                     stroke="#FF8B94"
+                                     stroke-width="2"
+                                     stroke-linejoin="round"/>
+                            {{-- Antenna --}}
+                            <line x1="32" y1="18" x2="32" y2="6" stroke="#2E3A59" stroke-width="2"/>
                             <circle cx="32" cy="6" r="3" fill="#FF8B94"/>
-                            <polygon points="58,32 52,26 52,38" fill="#FFD97D"/>
+                            {{-- Body --}}
+                            <rect x="14" y="18" width="36" height="32" rx="10"
+                                  fill="#7EC8E3" stroke="#2E3A59" stroke-width="1.5"/>
+                            {{-- Eyes --}}
+                            <circle cx="25" cy="32" r="4" fill="white"/>
+                            <circle cx="39" cy="32" r="4" fill="white"/>
+                            <circle cx="25" cy="32" r="2" fill="#2E3A59"/>
+                            <circle cx="39" cy="32" r="2" fill="#2E3A59"/>
+                            {{-- Smile --}}
+                            <path d="M 26 42 Q 32 46 38 42"
+                                  stroke="#2E3A59" stroke-width="2" fill="none"
+                                  stroke-linecap="round"/>
                         </svg>
                     </div>
                 </div>
@@ -70,7 +82,7 @@
                 <h2 class="font-bold mb-3">{{ app()->getLocale() === 'id' ? 'Blok Perintah' : 'Command Blocks' }}</h2>
                 <div class="flex flex-wrap gap-3">
                     <button @click="addBlock('forward')" :disabled="running || won"
-                            class="btn-kid bg-kid-blue text-white">
+                            class="btn-kid bg-kid-teal text-white">
                         ➡️ {{ app()->getLocale() === 'id' ? 'Maju' : 'Move' }}
                     </button>
                     <button @click="addBlock('left')" :disabled="running || won"
@@ -78,7 +90,7 @@
                         ↺ {{ app()->getLocale() === 'id' ? 'Kiri' : 'Left' }}
                     </button>
                     <button @click="addBlock('right')" :disabled="running || won"
-                            class="btn-kid bg-kid-coral text-white">
+                            class="btn-kid bg-kid-teal text-white">
                         ↻ {{ app()->getLocale() === 'id' ? 'Kanan' : 'Right' }}
                     </button>
                     <template x-if="allowLoops">
@@ -91,7 +103,7 @@
             </div>
 
             {{-- Program --}}
-            <div class="bg-white rounded-kid shadow-md p-4 min-h-[180px]">
+            <div class="bg-white rounded-kid shadow-md p-4 min-h-[200px]">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="font-bold">{{ app()->getLocale() === 'id' ? 'Program Anda' : 'Your Program' }}</h2>
                     <span class="text-xs text-gray-400">
@@ -100,20 +112,20 @@
                 </div>
 
                 <div @click="focusMain()"
-                     class="flex flex-wrap gap-2 p-3 rounded-kid transition cursor-pointer"
+                     class="flex flex-wrap gap-2 p-4 rounded-kid transition cursor-pointer min-h-[100px]"
                      :class="focusedContainer === 'main'
-                        ? 'bg-kid-blue/10 ring-2 ring-kid-blue'
-                        : 'bg-kid-bg'">
+                        ? 'bg-kid-teal/15 ring-2 ring-kid-coral'
+                        : 'bg-kid-bg ring-1 ring-gray-200'">
 
                     <template x-for="(block, i) in program" :key="i">
                         <div>
                             <template x-if="block.type !== 'loop'">
                                 <button @click.stop="removeBlock(i)" :disabled="running"
-                                        class="px-4 py-2 rounded-kid font-bold text-white"
+                                        class="px-5 py-3 rounded-kid font-extrabold text-white shadow-sm"
                                         :class="{
-                                            'bg-kid-blue': block.type === 'forward',
+                                            'bg-kid-teal': block.type === 'forward',
                                             'bg-kid-purple': block.type === 'left',
-                                            'bg-kid-coral': block.type === 'right',
+                                            'bg-kid-teal': block.type === 'right',
                                         }">
                                     <span x-show="block.type === 'forward'">➡️</span>
                                     <span x-show="block.type === 'left'">↺</span>
@@ -123,30 +135,30 @@
 
                             <template x-if="block.type === 'loop'">
                                 <div @click.stop="focusLoop(i)"
-                                     class="border-4 rounded-kid p-3 bg-kid-yellow/10 transition cursor-pointer"
+                                     class="border-4 rounded-kid p-3 bg-kid-yellow/15 transition cursor-pointer"
                                      :class="focusedContainer === String(i)
                                         ? 'border-kid-yellow ring-4 ring-kid-yellow/50'
-                                        : 'border-kid-yellow/60'">
+                                        : 'border-kid-yellow/70'">
 
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="font-bold text-sm">🔁</span>
                                         <button @click.stop="setLoopCount(i, -1)" :disabled="running"
-                                                class="w-6 h-6 rounded-full bg-kid-yellow font-extrabold text-kid-text leading-none">−</button>
+                                                class="w-7 h-7 rounded-full bg-kid-yellow font-extrabold text-kid-text leading-none">−</button>
                                         <span class="font-extrabold text-lg" x-text="block.count"></span>
                                         <button @click.stop="setLoopCount(i, 1)" :disabled="running"
-                                                class="w-6 h-6 rounded-full bg-kid-yellow font-extrabold text-kid-text leading-none">+</button>
+                                                class="w-7 h-7 rounded-full bg-kid-yellow font-extrabold text-kid-text leading-none">+</button>
                                         <button @click.stop="removeBlock(i)" :disabled="running"
                                                 class="ml-auto text-kid-coral text-sm font-bold">✕</button>
                                     </div>
 
-                                    <div class="flex flex-wrap gap-2 min-h-[40px]">
+                                    <div class="flex flex-wrap gap-2 min-h-[44px]">
                                         <template x-for="(inner, j) in block.body" :key="j">
                                             <button @click.stop="removeLoopBlock(i, j)" :disabled="running"
-                                                    class="px-3 py-1 rounded-kid text-sm font-bold text-white"
+                                                    class="px-4 py-2 rounded-kid text-sm font-extrabold text-white shadow-sm"
                                                     :class="{
-                                                        'bg-kid-blue': inner.type === 'forward',
+                                                        'bg-kid-teal': inner.type === 'forward',
                                                         'bg-kid-purple': inner.type === 'left',
-                                                        'bg-kid-coral': inner.type === 'right',
+                                                        'bg-kid-teal': inner.type === 'right',
                                                     }">
                                                 <span x-show="inner.type === 'forward'">➡️</span>
                                                 <span x-show="inner.type === 'left'">↺</span>
@@ -170,50 +182,19 @@
 
             {{-- Controls --}}
             <div class="flex gap-3">
-                <button @click="run()" :disabled="running || won"
-                        class="btn-kid bg-kid-mint text-white flex-1 text-lg">
+                <button @click="run()"
+                        :disabled="running || won || program.length === 0"
+                        class="btn-kid flex-1 text-lg transition"
+                        :class="(running || won || program.length === 0)
+                            ? 'bg-gray-200 text-gray-400'
+                            : 'bg-kid-teal text-white'">
                     ▶ {{ app()->getLocale() === 'id' ? 'Jalankan' : 'Run' }}
                 </button>
                 <button @click="clearProgram()" :disabled="running"
-                        class="btn-kid bg-gray-200 text-gray-700 flex-1">
+                        class="btn-kid bg-kid-teal text-white flex-1">
                     🗑 {{ app()->getLocale() === 'id' ? 'Hapus' : 'Clear' }}
                 </button>
             </div>
-
-            {{-- Message --}}
-            <template x-if="message">
-                <div class="rounded-kid p-4 font-semibold"
-                     :class="{
-                        'bg-kid-coral/30 text-kid-text': messageType === 'error',
-                        'bg-kid-mint/50 text-kid-text': messageType === 'success',
-                        'bg-kid-bg text-kid-text': messageType === 'info',
-                     }"
-                     x-text="message"></div>
-            </template>
-
-            {{-- Win overlay --}}
-            <template x-if="won">
-                <div class="bg-kid-yellow/60 rounded-kid p-6 text-center">
-                    <div class="text-5xl mb-2">🎉</div>
-                    <div class="text-xl font-extrabold mb-1">
-                        {{ app()->getLocale() === 'id' ? 'Hebat!' : 'Great job!' }}
-                    </div>
-                    <div class="text-2xl mb-4" x-text="'⭐'.repeat(starsEarned)"></div>
-                    <div class="flex gap-3 justify-center">
-                        @if($nextLevel)
-                            <a href="{{ route('play', $nextLevel) }}"
-                               class="btn-kid bg-kid-blue text-white">
-                                {{ app()->getLocale() === 'id' ? 'Level Berikutnya' : 'Next Level' }} →
-                            </a>
-                        @else
-                            <a href="{{ route('student.dashboard') }}"
-                               class="btn-kid bg-kid-blue text-white">
-                                {{ app()->getLocale() === 'id' ? 'Selesai' : 'Finish' }}
-                            </a>
-                        @endif
-                    </div>
-                </div>
-            </template>
 
             @if($previousStars > 0)
                 <div class="text-sm text-gray-500 text-center">
@@ -223,4 +204,53 @@
             @endif
         </div>
     </div>
+
+    {{-- ==================== WIN MODAL ==================== --}}
+    <template x-if="showWinModal">
+        <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
+                <div class="text-6xl mb-3">🎉</div>
+                <h2 class="text-3xl font-extrabold mb-2">
+                    {{ app()->getLocale() === 'id' ? 'Hebat!' : 'Great job!' }}
+                </h2>
+                <div class="text-4xl my-4" x-text="'⭐'.repeat(starsEarned)"></div>
+                <p class="text-gray-500 mb-6">
+                    {{ app()->getLocale() === 'id' ? 'Kamu berhasil menyelesaikan level!' : 'You completed the level!' }}
+                </p>
+                <div class="flex flex-col gap-3">
+                    @if($nextLevel)
+                        <a href="{{ route('play', $nextLevel) }}"
+                           class="btn-kid bg-kid-teal text-white text-lg">
+                            {{ app()->getLocale() === 'id' ? 'Level Berikutnya' : 'Next Level' }} →
+                        </a>
+                    @endif
+                    <a href="{{ route('student.dashboard') }}"
+                       class="btn-kid bg-kid-teal text-white">
+                        {{ app()->getLocale() === 'id' ? 'Kembali ke Dasbor' : 'Back to Dashboard' }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    {{-- ==================== FAIL MODAL ==================== --}}
+    <template x-if="showFailModal">
+        <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
+                <div class="text-6xl mb-3">😅</div>
+                <h2 class="text-3xl font-extrabold mb-2">
+                    {{ app()->getLocale() === 'id' ? 'Belum Berhasil' : 'Not Yet!' }}
+                </h2>
+                <p class="text-gray-500 mb-6">
+                    {{ app()->getLocale() === 'id'
+                        ? 'Robot belum mencapai bendera. Ayo coba lagi!'
+                        : 'The robot didn\'t reach the flag. Try again!' }}
+                </p>
+                <button @click="dismissFail()"
+                        class="btn-kid bg-kid-teal text-white w-full text-lg">
+                    {{ app()->getLocale() === 'id' ? 'Coba Lagi' : 'Try Again' }}
+                </button>
+            </div>
+        </div>
+    </template>
 </div>
