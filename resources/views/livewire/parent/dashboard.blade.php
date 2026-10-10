@@ -23,7 +23,7 @@
     {{-- ==================== EMPTY STATE ==================== --}}
     @if($children->isEmpty())
         <div class="bg-white rounded-kid shadow-md p-10 text-center">
-            <x-lucide-user-plus class="w-16 h-16 mx-auto mb-4 text-kid-coral" stroke-width="1.5" />
+            <x-lucide-user-plus class="w-16 h-16 mx-auto mb-4 text-kid-blue animate-pulse-soft" stroke-width="1.5" />
             <p class="text-gray-500">
                 {{ app()->getLocale() === 'id'
                     ? 'Belum ada akun anak. Klik "Tambah Anak" untuk membuat.'
@@ -34,7 +34,7 @@
         {{-- ==================== CHILDREN GRID ==================== --}}
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($children as $child)
-                <div class="bg-white rounded-kid shadow-md p-6">
+<div class="bg-white rounded-kid shadow-md p-6 card-lift">
                     <div class="flex items-center gap-4 mb-4">
                         @php
                             $colors = [

@@ -15,7 +15,7 @@
     @if ($showModal)
         <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
              wire:click.self="closeModal">
-            <div class="bg-white rounded-kid shadow-2xl w-full max-w-md p-8">
+            <div class="animate-pop-in bg-white rounded-kid shadow-2xl w-full max-w-md p-8">
 
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-extrabold">

@@ -120,13 +120,13 @@
                     <template x-for="(block, i) in program" :key="i">
                         <div>
                             <template x-if="block.type !== 'loop'">
-                                <button @click.stop="removeBlock(i)" :disabled="running"
-                                        class="px-5 py-3 rounded-kid font-extrabold text-white shadow-sm"
-                                        :class="{
-                                            'bg-kid-teal': block.type === 'forward',
-                                            'bg-kid-purple': block.type === 'left',
-                                            'bg-kid-teal': block.type === 'right',
-                                        }">
+                              <button @click.stop="removeBlock(i)" :disabled="running"
+        class="animate-slide-up px-5 py-3 rounded-kid font-extrabold text-white shadow-sm"
+        :class="{
+            'bg-kid-blue': block.type === 'forward',
+            'bg-kid-purple': block.type === 'left',
+            'bg-kid-coral': block.type === 'right',
+        }">
                                     <span x-show="block.type === 'forward'">➡️</span>
                                     <span x-show="block.type === 'left'">↺</span>
                                     <span x-show="block.type === 'right'">↻</span>
@@ -134,8 +134,8 @@
                             </template>
 
                             <template x-if="block.type === 'loop'">
-                                <div @click.stop="focusLoop(i)"
-                                     class="border-4 rounded-kid p-3 bg-kid-yellow/15 transition cursor-pointer"
+                               <div @click.stop="focusLoop(i)"
+     class="animate-slide-up border-4 rounded-kid p-3 bg-kid-yellow/15 transition cursor-pointer"
                                      :class="focusedContainer === String(i)
                                         ? 'border-kid-yellow ring-4 ring-kid-yellow/50'
                                         : 'border-kid-yellow/70'">
@@ -208,12 +208,18 @@
     {{-- ==================== WIN MODAL ==================== --}}
     <template x-if="showWinModal">
         <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
+            <div class="animate-pop-in bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
                 <div class="text-6xl mb-3">🎉</div>
                 <h2 class="text-3xl font-extrabold mb-2">
                     {{ app()->getLocale() === 'id' ? 'Hebat!' : 'Great job!' }}
                 </h2>
-                <div class="text-4xl my-4" x-text="'⭐'.repeat(starsEarned)"></div>
+        <div class="flex justify-center gap-2 my-4">
+    <template x-for="i in starsEarned" :key="i">
+        <div class="animate-pop-in" :style="`animation-delay: ${(i - 1) * 120}ms`">
+            <x-lucide-star class="w-10 h-10 text-kid-yellow fill-current" stroke-width="1.5" />
+        </div>
+    </template>
+</div>
                 <p class="text-gray-500 mb-6">
                     {{ app()->getLocale() === 'id' ? 'Kamu berhasil menyelesaikan level!' : 'You completed the level!' }}
                 </p>
@@ -236,7 +242,7 @@
     {{-- ==================== FAIL MODAL ==================== --}}
     <template x-if="showFailModal">
         <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
+          <div class="animate-pop-in bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
                 <div class="text-6xl mb-3">😅</div>
                 <h2 class="text-3xl font-extrabold mb-2">
                     {{ app()->getLocale() === 'id' ? 'Belum Berhasil' : 'Not Yet!' }}

@@ -1,5 +1,5 @@
 <div>
-    <div class="bg-white rounded-kid shadow-md p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+  <div class="animate-pop-in bg-white rounded-kid shadow-md p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 rounded-full bg-kid-teal flex items-center justify-center text-3xl">🤖</div>
             <div>
@@ -29,7 +29,7 @@
     @else
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($modules as $i => $module)
-                <div class="bg-white rounded-kid shadow-md p-6">
+               <div class="bg-white rounded-kid shadow-md p-6 card-lift">
                     <div class="w-12 h-12 rounded-full bg-kid-purple text-white flex items-center justify-center font-extrabold text-xl mb-4">
                         {{ $i + 1 }}
                     </div>

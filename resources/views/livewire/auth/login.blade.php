@@ -1,5 +1,5 @@
 <div class="min-h-screen flex items-center justify-center py-10 px-4">
-    <div class="w-full max-w-md bg-white rounded-kid shadow-lg p-8">
+    <div class="animate-pop-in w-full max-w-md bg-white rounded-kid shadow-lg p-8">
 
         <div class="text-center mb-8">
             <h1 class="text-3xl font-extrabold text-kid-text">

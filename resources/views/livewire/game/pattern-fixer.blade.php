@@ -130,7 +130,7 @@
 
                             {{-- Options popover --}}
                             <template x-if="editingIndex === i">
-                                <div class="absolute top-full mt-2 left-0 z-20 bg-white rounded-kid border border-gray-200 shadow-lg p-2 flex gap-2">
+                               <div class="animate-pop-in absolute top-full mt-2 left-0 z-20 bg-white rounded-kid border border-gray-200 shadow-lg p-2 flex gap-2">
                                     <template x-for="opt in options" :key="opt">
                                         <button @click="chooseReplacement(i, opt)"
                                                 :disabled="running"
@@ -176,16 +176,18 @@
     {{-- WIN MODAL --}}
     <template x-if="showWinModal">
         <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
+          <div class="animate-pop-in bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
                 <x-lucide-party-popper class="w-20 h-20 mx-auto mb-3 text-kid-blue" stroke-width="1.5" />
                 <h2 class="text-3xl font-extrabold mb-2">
                     {{ app()->getLocale() === 'id' ? 'Hebat!' : 'Great job!' }}
                 </h2>
-                <div class="flex justify-center gap-2 my-4">
-                    <template x-for="i in starsEarned" :key="i">
-                        <x-lucide-star class="w-10 h-10 text-kid-yellow fill-current" stroke-width="1.5" />
-                    </template>
-                </div>
+          <div class="flex justify-center gap-2 my-4">
+    <template x-for="i in starsEarned" :key="i">
+        <div class="animate-pop-in" :style="`animation-delay: ${(i - 1) * 120}ms`">
+            <x-lucide-star class="w-10 h-10 text-kid-yellow fill-current" stroke-width="1.5" />
+        </div>
+    </template>
+</div>
                 <p class="text-gray-500 mb-6">
                     {{ app()->getLocale() === 'id' ? 'Kamu memperbaiki programnya!' : 'You fixed the program!' }}
                 </p>
@@ -209,7 +211,7 @@
     {{-- FAIL MODAL --}}
     <template x-if="showFailModal">
         <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
+          <div class="animate-pop-in bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full">
                 <x-lucide-frown class="w-20 h-20 mx-auto mb-3 text-kid-coral" stroke-width="1.5" />
                 <h2 class="text-3xl font-extrabold mb-2">
                     {{ app()->getLocale() === 'id' ? 'Belum Berhasil' : 'Not Yet!' }}
