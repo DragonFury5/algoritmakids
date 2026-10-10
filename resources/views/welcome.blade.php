@@ -42,8 +42,8 @@
 
     {{-- ==================== HERO ==================== --}}
     <section class="relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-kid-yellow/30 blur-3xl"></div>
-        <div class="absolute top-40 -left-32 w-80 h-80 rounded-full bg-kid-mint/30 blur-3xl"></div>
+        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-kid-yellow/30 blur-3xl animate-pulse-soft"></div>
+        <div class="absolute top-40 -left-32 w-80 h-80 rounded-full bg-kid-mint/30 blur-3xl animate-pulse-soft" style="animation-delay: -1.5s;"></div>
 
         <div class="relative max-w-6xl mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-32">
             <div class="grid md:grid-cols-12 gap-8 items-center">
@@ -91,20 +91,20 @@
                             <div class="w-72 h-72 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-kid-mint/40 to-kid-blue/20"></div>
                         </div>
 
-                        <div class="absolute top-4 left-4 text-kid-yellow">
-                            <x-lucide-star class="w-10 h-10 fill-current" stroke-width="1.5" />
-                        </div>
-                        <div class="absolute bottom-8 right-2 text-kid-purple">
-                            <x-lucide-sparkles class="w-8 h-8" stroke-width="2" />
-                        </div>
-                        <div class="absolute top-20 right-4 text-kid-mint">
-                            <x-lucide-code class="w-9 h-9" stroke-width="2.5" />
-                        </div>
-                        <div class="absolute bottom-4 left-2 text-kid-blue">
-                            <x-lucide-zap class="w-8 h-8 fill-current" stroke-width="1.5" />
-                        </div>
+                       <div class="absolute top-4 left-4 text-kid-yellow animate-float" style="animation-delay: -1s;">
+    <x-lucide-star class="w-10 h-10 fill-current" stroke-width="1.5" />
+</div>
+<div class="absolute bottom-8 right-2 text-kid-purple animate-float" style="animation-delay: -2s;">
+    <x-lucide-sparkles class="w-8 h-8" stroke-width="2" />
+</div>
+<div class="absolute top-20 right-4 text-kid-mint animate-spin-slow">
+    <x-lucide-code class="w-9 h-9" stroke-width="2.5" />
+</div>
+<div class="absolute bottom-4 left-2 text-kid-blue animate-pulse-soft">
+    <x-lucide-zap class="w-8 h-8 fill-current" stroke-width="1.5" />
+</div>
 
-                        <svg viewBox="0 0 200 200" class="w-64 h-64 md:w-72 md:h-72 relative z-10 drop-shadow-2xl">
+                     <svg viewBox="0 0 200 200" class="w-64 h-64 md:w-72 md:h-72 relative z-10 drop-shadow-2xl animate-float">
                             <line x1="100" y1="45" x2="100" y2="20" stroke="#2D2A26" stroke-width="4" stroke-linecap="round"/>
                             <circle cx="100" cy="18" r="8" fill="#FF6B6B"/>
                             <rect x="30" y="95" width="12" height="30" rx="6" fill="#4ECDC4"/>
@@ -151,8 +151,7 @@
                 </div>
             </div>
 
-            <div class="md:col-span-2 flex flex-col gap-5">
-                <div class="bg-white rounded-kid p-6 border-2 border-kid-yellow/40 flex items-start gap-4">
+            <div class="md:col-span-2 flex flex-col gap-5"><div class="bg-white rounded-kid p-6 border-2 border-kid-yellow/40 flex items-start gap-4 card-lift">
                     <div class="w-12 h-12 rounded-xl bg-kid-yellow flex items-center justify-center shrink-0">
                         <x-lucide-palette class="w-6 h-6 text-kid-text" stroke-width="2" />
                     </div>
@@ -162,7 +161,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-kid p-6 border-2 border-kid-mint/40 flex items-start gap-4">
+              <div class="bg-white rounded-kid p-6 border-2 border-kid-mint/40 flex items-start gap-4 card-lift">
                     <div class="w-12 h-12 rounded-xl bg-kid-mint flex items-center justify-center shrink-0">
                         <x-lucide-shield-check class="w-6 h-6 text-white" stroke-width="2" />
                     </div>
@@ -201,7 +200,7 @@
                     </div>
 
                     <div class="w-full md:w-1/2 {{ $i % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16' }} pl-24 md:pl-0">
-                        <div class="bg-white rounded-kid p-6 shadow-sm border border-gray-100">
+                       <div class="bg-white rounded-kid p-6 shadow-sm border border-gray-100 card-lift">
                             <div class="flex items-center gap-3 mb-3 {{ $i % 2 === 0 ? 'md:justify-end' : '' }}">
                                 <x-dynamic-component :component="'lucide-' . $step['icon']" class="w-5 h-5 text-gray-500" stroke-width="2.5" />
                                 <h3 class="text-xl font-extrabold">{{ __("ui.{$step['title']}") }}</h3>
@@ -245,8 +244,8 @@
     {{-- ==================== FINAL CTA ==================== --}}
     <section class="max-w-6xl mx-auto px-6 py-16">
         <div class="bg-kid-text rounded-kid p-10 md:p-16 text-center relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 rounded-full bg-kid-blue/20 blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-kid-mint/20 blur-3xl"></div>
+           <div class="absolute top-0 right-0 w-64 h-64 rounded-full bg-kid-blue/20 blur-3xl animate-pulse-soft"></div>
+          <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-kid-mint/20 blur-3xl animate-pulse-soft" style="animation-delay: -1.5s;"></div>
 
             <div class="relative z-10">
                 <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-4">
