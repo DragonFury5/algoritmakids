@@ -6,7 +6,7 @@
     <title>{{ config('app.name', 'AlgoritmaKids') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-kid-bg font-kid text-kid-text antialiased">
+<body class="bg-kid-bg font-body text-kid-text antialiased min-h-screen">
 
     {{-- ==================== NAVBAR ==================== --}}
     <nav class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -92,13 +92,13 @@
         </h2>
 
         <div class="grid md:grid-cols-3 gap-6">
-          @foreach([
-    ['icon' => 'brain', 'title' => 'advantage_1_title', 'desc' => 'advantage_1_desc', 'color' => 'kid-blue',  'text' => 'text-white'],
-    ['icon' => 'palette', 'title' => 'advantage_2_title', 'desc' => 'advantage_2_desc', 'color' => 'kid-yellow', 'text' => 'text-kid-text'],
-    ['icon' => 'shield-check', 'title' => 'advantage_3_title', 'desc' => 'advantage_3_desc', 'color' => 'kid-mint', 'text' => 'text-white'],
+        @foreach([
+    ['icon' => 'brain',        'title' => 'advantage_1_title', 'desc' => 'advantage_1_desc', 'bg' => 'bg-kid-blue',   'text' => 'text-white'],
+    ['icon' => 'palette',      'title' => 'advantage_2_title', 'desc' => 'advantage_2_desc', 'bg' => 'bg-kid-yellow', 'text' => 'text-kid-text'],
+    ['icon' => 'shield-check', 'title' => 'advantage_3_title', 'desc' => 'advantage_3_desc', 'bg' => 'bg-kid-mint',   'text' => 'text-white'],
 ] as $card)
     <div class="bg-white rounded-kid shadow-md p-6 text-center">
-        <div class="w-16 h-16 rounded-full bg-{{ $card['color'] }} flex items-center justify-center mx-auto mb-4 {{ $card['text'] }}">
+        <div class="w-16 h-16 rounded-full {{ $card['bg'] }} flex items-center justify-center mx-auto mb-4 {{ $card['text'] }}">
             <x-dynamic-component :component="'lucide-' . $card['icon']" class="w-8 h-8" stroke-width="2.5" />
         </div>
         <h3 class="text-xl font-bold mb-2">{{ __("ui.{$card['title']}") }}</h3>
@@ -115,19 +115,19 @@
         </h2>
 
         <div class="grid md:grid-cols-3 gap-6">
-            @foreach([
-                ['num' => '1', 'title' => 'curriculum_1_title', 'desc' => 'curriculum_1_desc', 'color' => 'kid-blue'],
-                ['num' => '2', 'title' => 'curriculum_2_title', 'desc' => 'curriculum_2_desc', 'color' => 'kid-purple'],
-                ['num' => '3', 'title' => 'curriculum_3_title', 'desc' => 'curriculum_3_desc', 'color' => 'kid-coral'],
-            ] as $mod)
-                <div class="bg-white rounded-kid shadow-md p-6">
-                    <div class="w-12 h-12 rounded-full bg-{{ $mod['color'] }} text-white flex items-center justify-center font-extrabold text-xl mb-4">
-                        {{ $mod['num'] }}
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">{{ __("ui.{$mod['title']}") }}</h3>
-                    <p class="text-gray-600">{{ __("ui.{$mod['desc']}") }}</p>
-                </div>
-            @endforeach
+          @foreach([
+    ['num' => '1', 'title' => 'curriculum_1_title', 'desc' => 'curriculum_1_desc', 'bg' => 'bg-kid-blue'],
+    ['num' => '2', 'title' => 'curriculum_2_title', 'desc' => 'curriculum_2_desc', 'bg' => 'bg-kid-purple'],
+    ['num' => '3', 'title' => 'curriculum_3_title', 'desc' => 'curriculum_3_desc', 'bg' => 'bg-kid-coral'],
+] as $mod)
+    <div class="bg-white rounded-kid shadow-md p-6">
+        <div class="w-12 h-12 rounded-full {{ $mod['bg'] }} text-white flex items-center justify-center font-extrabold text-xl mb-4">
+            {{ $mod['num'] }}
+        </div>
+        <h3 class="text-xl font-bold mb-2">{{ __("ui.{$mod['title']}") }}</h3>
+        <p class="text-gray-600">{{ __("ui.{$mod['desc']}") }}</p>
+    </div>
+@endforeach
         </div>
     </section>
 

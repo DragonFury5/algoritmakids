@@ -7,9 +7,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-kid-bg font-kid text-kid-text antialiased min-h-screen">
+<body class="bg-kid-bg font-body text-kid-text antialiased min-h-screen">
 
-    <nav class="bg-white shadow-sm">
+    <nav class="bg-white border-b border-kid-border">
         <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
             <a href="{{ route('home') }}" class="text-xl font-extrabold border-kid-coral">
                 Algoritma<span class="border-kid-coral">Kids</span>
