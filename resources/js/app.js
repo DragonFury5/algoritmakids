@@ -224,4 +224,131 @@ document.addEventListener('alpine:init', () => {
             return true;
         },
     }));
+        Alpine.data('patternFixer', (config) => ({
+        width: config.width,
+        height: config.height,
+        start: config.start,
+        goal: config.goal,
+        walls: config.walls.map(w => w[0] + ',' + w[1]),
+        levelId: config.level_id,
+        options: config.options,
+        originalProgram: config.program,
+
+        robot: { x: config.start.x, y: config.start.y, dir: config.start.dir },
+        program: [],
+        editingIndex: null,
+        running: false,
+        won: false,
+        showWinModal: false,
+        showFailModal: false,
+        starsEarned: 0,
+        attempts: 0,
+
+        init() {
+            this.resetProgram();
+        },
+
+        resetProgram() {
+            this.program = JSON.parse(JSON.stringify(this.originalProgram));
+            this.editingIndex = null;
+            this.resetRobot();
+        },
+
+        get cell() { return 64; },
+
+        get robotStyle() {
+            return `transform: translate(${this.robot.x * this.cell}px, ${this.robot.y * this.cell}px);`;
+        },
+
+        get robotRotation() {
+            const a = { right: 0, down: 90, left: 180, up: 270 };
+            return `transform: rotate(${a[this.robot.dir] ?? 0}deg);`;
+        },
+
+        isWall(x, y) { return this.walls.includes(x + ',' + y); },
+
+        openEditor(i) {
+            if (this.running || this.won) return;
+            this.editingIndex = i;
+        },
+
+        cancelEdit() {
+            this.editingIndex = null;
+        },
+
+        async chooseReplacement(i, type) {
+            if (this.running || this.won) return;
+            this.program[i].type = type;
+            this.editingIndex = null;
+            await this.runProgram();
+        },
+
+        resetRobot() {
+            this.robot = { x: this.start.x, y: this.start.y, dir: this.start.dir };
+        },
+
+        dismissFail() {
+            this.showFailModal = false;
+            this.resetRobot();
+        },
+
+        sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
+
+        async runProgram() {
+            if (this.running || this.won) return;
+
+            this.running = true;
+            this.resetRobot();
+            this.showWinModal = false;
+            this.showFailModal = false;
+            this.attempts++;
+
+            for (const block of this.program) {
+                const ok = await this.execute(block);
+                if (! ok) {
+                    this.running = false;
+                    this.showFailModal = true;
+                    return;
+                }
+                if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
+                    this.starsEarned = this.attempts <= 1 ? 3 : (this.attempts <= 3 ? 2 : 1);
+                    this.won = true;
+                    this.running = false;
+                    await this.$wire.completeLevel(this.starsEarned);
+                    this.showWinModal = true;
+                    return;
+                }
+            }
+
+            this.running = false;
+            this.showFailModal = true;
+        },
+
+        async execute(block) {
+            if (block.type === 'forward') {
+                const d = { right: [1,0], down: [0,1], left: [-1,0], up: [0,-1] }[this.robot.dir];
+                const nx = this.robot.x + d[0];
+                const ny = this.robot.y + d[1];
+                if (nx < 0 || nx >= this.width || ny < 0 || ny >= this.height) return false;
+                if (this.isWall(nx, ny)) return false;
+                this.robot.x = nx;
+                this.robot.y = ny;
+                await this.sleep(400);
+                return true;
+            }
+            if (block.type === 'left') {
+                const o = ['right','up','left','down'];
+                this.robot.dir = o[(o.indexOf(this.robot.dir) + 1) % 4];
+                await this.sleep(250);
+                return true;
+            }
+            if (block.type === 'right') {
+                const o = ['right','down','left','up'];
+                this.robot.dir = o[(o.indexOf(this.robot.dir) + 1) % 4];
+                await this.sleep(250);
+                return true;
+            }
+            return true;
+        },
+    }));
 });

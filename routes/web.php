@@ -5,6 +5,7 @@ use App\Livewire\Auth\Register;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
+use App\Livewire\Game\PatternFixer;
 use App\Livewire\Game\RobotPath;
 
 
@@ -12,7 +13,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
- Route::get('/play/{level}', RobotPath::class)->name('play');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', Register::class)->name('register');
@@ -49,9 +49,10 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::middleware('role:student')->group(function () {
-        Route::get('/student', StudentDashboard::class)->name('student.dashboard');
-    });
-
+    Route::get('/student', StudentDashboard::class)->name('student.dashboard');
+    Route::get('/play/robot/{level}', RobotPath::class)->name('play.robot');
+    Route::get('/play/pattern/{level}', PatternFixer::class)->name('play.pattern');
+});
     Route::middleware('role:admin')->group(function () {
         Route::view('/admin', 'placeholder')->name('admin.dashboard');
     });

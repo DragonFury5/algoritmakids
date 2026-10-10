@@ -75,6 +75,8 @@ if ($loops) {
                 'game_type' => 'robot_path',
             ])
         );
+
+        
     }
 }
 
@@ -135,5 +137,94 @@ if ($loops) {
                 ])
             );
         }
+$cond = Module::where('slug', 'conditionals')->first();
+if ($cond) {
+    $condLevels = [
+        [
+            'slug' => 'straight-fix',
+            'title_en' => 'Fix the Straight Path',
+            'title_id' => 'Perbaiki Jalur Lurus',
+            'instructions_en' => 'One block is wrong. Click it and pick the correct one so the robot reaches the flag.',
+            'instructions_id' => 'Satu blok salah. Klik dan pilih yang benar agar robot mencapai bendera.',
+            'order' => 1,
+            'game_data' => [
+                'width' => 5, 'height' => 3,
+                'start' => ['x' => 0, 'y' => 1, 'dir' => 'right'],
+                'goal'  => ['x' => 4, 'y' => 1],
+                'walls' => [],
+                'program' => [
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                    ['type' => 'left'],
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                ],
+                'bug_index' => 2,
+                'options' => ['forward', 'left', 'right'],
+            ],
+        ],
+        [
+            'slug' => 'turn-down',
+            'title_en' => 'Turn Down',
+            'title_id' => 'Belok ke Bawah',
+            'instructions_en' => 'The robot needs to turn down to reach the flag. Fix the wrong block.',
+            'instructions_id' => 'Robot harus belok ke bawah untuk mencapai bendera. Perbaiki blok yang salah.',
+            'order' => 2,
+            'game_data' => [
+                'width' => 3, 'height' => 5,
+                'start' => ['x' => 0, 'y' => 0, 'dir' => 'right'],
+                'goal'  => ['x' => 2, 'y' => 4],
+                'walls' => [],
+                'program' => [
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                    ['type' => 'left'],
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                ],
+                'bug_index' => 2,
+                'options' => ['forward', 'left', 'right'],
+            ],
+        ],
+        [
+            'slug' => 'down-to-flag',
+            'title_en' => 'Down to the Flag',
+            'title_id' => 'Turun ke Bendera',
+            'instructions_en' => 'Fix the last block so the robot reaches the flag.',
+            'instructions_id' => 'Perbaiki blok terakhir agar robot mencapai bendera.',
+            'order' => 3,
+            'game_data' => [
+                'width' => 4, 'height' => 4,
+                'start' => ['x' => 0, 'y' => 0, 'dir' => 'right'],
+                'goal'  => ['x' => 3, 'y' => 3],
+                'walls' => [],
+                'program' => [
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                    ['type' => 'right'],
+                    ['type' => 'forward'],
+                    ['type' => 'forward'],
+                    ['type' => 'left'],
+                ],
+                'bug_index' => 6,
+                'options' => ['forward', 'left', 'right'],
+            ],
+        ],
+    ];
+
+    foreach ($condLevels as $data) {
+        Level::updateOrCreate(
+            ['module_id' => $cond->id, 'slug' => $data['slug']],
+            array_merge($data, [
+                'module_id' => $cond->id,
+                'game_type' => 'pattern_fixer',
+            ])
+        );
+    }
+}
+
     }
 }

@@ -46,4 +46,11 @@ class Level extends Model
     {
         return $this->{'instructions_' . app()->getLocale()};
     }
+
+    public function playRoute(): string
+{
+    return $this->game_type === 'robot_path'
+        ? route('play.robot', $this)
+        : route('play.pattern', $this);
+}
 }

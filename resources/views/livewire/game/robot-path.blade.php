@@ -219,7 +219,7 @@
                 </p>
                 <div class="flex flex-col gap-3">
                     @if($nextLevel)
-                        <a href="{{ route('play', $nextLevel) }}"
+    <a href="{{ $nextLevel->playRoute() }}"
                            class="btn-kid bg-kid-teal text-white text-lg">
                             {{ app()->getLocale() === 'id' ? 'Level Berikutnya' : 'Next Level' }} →
                         </a>

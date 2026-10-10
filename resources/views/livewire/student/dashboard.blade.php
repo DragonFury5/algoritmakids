@@ -38,14 +38,15 @@
                     <p class="text-xs text-gray-400 mb-4">
                         {{ $module->levels->count() }} {{ app()->getLocale() === 'id' ? 'level' : 'levels' }}
                     </p>
-                    @php $firstLevel = $module->levels->first(); @endphp
+                @php $firstLevel = $module->levels->first(); @endphp
 @if($firstLevel)
-    <a href="{{ route('play', $firstLevel) }}"
-       class="btn-kid bg-kid-teal text-white w-full">
-        {{ app()->getLocale() === 'id' ? 'Mulai' : 'Start' }}
+    <a href="{{ $firstLevel->playRoute() }}"
+       class="btn-kid bg-kid-blue text-white w-full">
+        <span>{{ app()->getLocale() === 'id' ? 'Mulai' : 'Start' }}</span>
+        <x-lucide-arrow-right class="w-4 h-4 ml-2" stroke-width="2.5" />
     </a>
 @else
-    <button class="btn-kid bg-gray-300 text-white w-full" disabled>
+    <button class="btn-kid bg-gray-200 text-gray-400 w-full" disabled>
         {{ app()->getLocale() === 'id' ? 'Segera Hadir' : 'Coming Soon' }}
     </button>
 @endif
