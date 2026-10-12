@@ -23,6 +23,7 @@ class User extends Authenticatable
         'parent_id',
         'consent_given_at',
         'sound_enabled',
+        'tier',
     ];
 
     protected $hidden = [
@@ -86,4 +87,8 @@ class User extends Authenticatable
     {
         return (int) $this->progress()->sum('stars');
     }
+    public function tierConfig(): array
+{
+    return config('tiers.' . $this->tier) ?? config('tiers.rookie');
+}
 }

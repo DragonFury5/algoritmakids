@@ -42,92 +42,91 @@
     </div>
 </nav>
 
-    {{-- ==================== HERO ==================== --}}
-    <section class="relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-kid-yellow/30 blur-3xl animate-pulse-soft"></div>
-        <div class="absolute top-40 -left-32 w-80 h-80 rounded-full bg-kid-mint/30 blur-3xl animate-pulse-soft" style="animation-delay: -1.5s;"></div>
+   {{-- ==================== HERO ==================== --}}
+<section class="relative overflow-hidden">
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-kid-yellow/30 blur-3xl animate-pulse-soft"></div>
+    <div class="absolute top-40 -left-32 w-80 h-80 rounded-full bg-kid-mint/30 blur-3xl animate-pulse-soft" style="animation-delay: -1.5s;"></div>
 
-        <div class="relative max-w-6xl mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-32">
-            <div class="grid md:grid-cols-12 gap-8 items-center">
+    <div class="relative max-w-3xl mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-32 text-center">
 
-                <div class="md:col-span-7 relative z-10">
-                    <span class="inline-block bg-kid-blue/10 text-kid-blue font-bold text-xs uppercase tracking-wider px-4 py-1.5 rounded-full mb-6">
-                        {{ app()->getLocale() === 'id' ? 'Untuk anak usia 8–12 tahun' : 'For kids aged 8–12' }}
-                    </span>
+        <span class="inline-block bg-kid-blue/10 text-kid-blue font-bold text-xs uppercase tracking-wider px-4 py-1.5 rounded-full mb-6">
+            {{ app()->getLocale() === 'id' ? 'Untuk anak usia 8–12 tahun' : 'For kids aged 8–12' }}
+        </span>
 
-                    <h1 class="text-4xl md:text-6xl font-extrabold leading-[1.1] mb-6">
-                        {{ __('ui.hero_title') }}
-                    </h1>
-                    <p class="text-lg text-gray-600 mb-8 max-w-lg">
-                        {{ __('ui.hero_subtitle') }}
-                    </p>
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-[1.1] mb-6">
+            {{ __('ui.hero_title') }}
+        </h1>
 
-                    <div class="flex flex-wrap gap-3">
-                        @guest
-                            <a href="{{ route('register') }}" class="btn-kid bg-kid-blue text-white text-base md:text-lg px-8 py-4">
-                                <span>{{ __('ui.hero_cta') }}</span>
-                                <x-lucide-arrow-right class="w-5 h-5 ml-2" stroke-width="2.5" />
-                            </a>
-                            <a href="{{ route('login') }}" class="btn-kid bg-white text-kid-text border-2 border-gray-200 text-base md:text-lg px-6 py-4">
-                                {{ __('ui.hero_cta_secondary') }}
-                            </a>
-                        @else
-                            @php
-                                $dashRoute = auth()->user()->isAdmin()
-                                    ? route('admin.dashboard')
-                                    : (auth()->user()->isParent()
-                                        ? route('parent.dashboard')
-                                        : route('student.dashboard'));
-                            @endphp
-                            <a href="{{ $dashRoute }}" class="btn-kid bg-kid-blue text-white text-base md:text-lg px-8 py-4">
-                                <span>{{ __('ui.hero_cta') }}</span>
-                                <x-lucide-arrow-right class="w-5 h-5 ml-2" stroke-width="2.5" />
-                            </a>
-                        @endguest
-                    </div>
+        <p class="text-lg text-gray-600 mb-12 max-w-xl mx-auto">
+            {{ __('ui.hero_subtitle') }}
+        </p>
+
+        {{-- Robot --}}
+        <div class="flex justify-center mb-12">
+            <div class="relative flex justify-center">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-60 h-60 md:w-72 md:h-72 rounded-full bg-gradient-to-br from-kid-mint/40 to-kid-blue/20"></div>
                 </div>
 
-                <div class="md:col-span-5 relative">
-                    <div class="relative flex justify-center">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <div class="w-72 h-72 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-kid-mint/40 to-kid-blue/20"></div>
-                        </div>
-
-                       <div class="absolute top-4 left-4 text-kid-yellow animate-float" style="animation-delay: -1s;">
-    <x-lucide-star class="w-10 h-10 fill-current" stroke-width="1.5" />
-</div>
-<div class="absolute bottom-8 right-2 text-kid-purple animate-float" style="animation-delay: -2s;">
-    <x-lucide-sparkles class="w-8 h-8" stroke-width="2" />
-</div>
-<div class="absolute top-20 right-4 text-kid-mint animate-spin-slow">
-    <x-lucide-code class="w-9 h-9" stroke-width="2.5" />
-</div>
-<div class="absolute bottom-4 left-2 text-kid-blue animate-pulse-soft">
-    <x-lucide-zap class="w-8 h-8 fill-current" stroke-width="1.5" />
-</div>
-
-                     <svg viewBox="0 0 200 200" class="w-64 h-64 md:w-72 md:h-72 relative z-10 drop-shadow-2xl animate-float">
-                            <line x1="100" y1="45" x2="100" y2="20" stroke="#2D2A26" stroke-width="4" stroke-linecap="round"/>
-                            <circle cx="100" cy="18" r="8" fill="#FF6B6B"/>
-                            <rect x="30" y="95" width="12" height="30" rx="6" fill="#4ECDC4"/>
-                            <rect x="158" y="95" width="12" height="30" rx="6" fill="#4ECDC4"/>
-                            <rect x="45" y="50" width="110" height="110" rx="28" fill="#FF6B6B" stroke="#2D2A26" stroke-width="3"/>
-                            <rect x="60" y="70" width="80" height="55" rx="20" fill="#FFF8F0"/>
-                            <circle cx="80" cy="95" r="8" fill="#2D2A26"/>
-                            <circle cx="120" cy="95" r="8" fill="#2D2A26"/>
-                            <circle cx="83" cy="92" r="3" fill="white"/>
-                            <circle cx="123" cy="92" r="3" fill="white"/>
-                            <path d="M 85 112 Q 100 122 115 112" stroke="#2D2A26" stroke-width="3" fill="none" stroke-linecap="round"/>
-                            <rect x="80" y="135" width="40" height="15" rx="6" fill="#2D2A26"/>
-                            <circle cx="90" cy="142" r="2.5" fill="#4ECDC4"/>
-                            <circle cx="100" cy="142" r="2.5" fill="#FCD34D"/>
-                            <circle cx="110" cy="142" r="2.5" fill="#FF6B6B"/>
-                        </svg>
-                    </div>
+                <div class="absolute top-2 left-2 text-kid-yellow animate-float" style="animation-delay: -1s;">
+                    <x-lucide-star class="w-8 h-8 fill-current" stroke-width="1.5" />
                 </div>
+                <div class="absolute bottom-6 right-0 text-kid-purple animate-float" style="animation-delay: -2s;">
+                    <x-lucide-sparkles class="w-7 h-7" stroke-width="2" />
+                </div>
+                <div class="absolute top-16 right-2 text-kid-mint animate-spin-slow">
+                    <x-lucide-code class="w-8 h-8" stroke-width="2.5" />
+                </div>
+                <div class="absolute bottom-2 left-0 text-kid-blue animate-pulse-soft">
+                    <x-lucide-zap class="w-7 h-7 fill-current" stroke-width="1.5" />
+                </div>
+
+                <svg viewBox="0 0 200 200" class="w-56 h-56 md:w-64 md:h-64 relative z-10 drop-shadow-2xl animate-float">
+                    <line x1="100" y1="45" x2="100" y2="20" stroke="#2D2A26" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="100" cy="18" r="8" fill="#FF6B6B"/>
+                    <rect x="30" y="95" width="12" height="30" rx="6" fill="#4ECDC4"/>
+                    <rect x="158" y="95" width="12" height="30" rx="6" fill="#4ECDC4"/>
+                    <rect x="45" y="50" width="110" height="110" rx="28" fill="#FF6B6B" stroke="#2D2A26" stroke-width="3"/>
+                    <rect x="60" y="70" width="80" height="55" rx="20" fill="#FFF8F0"/>
+                    <circle cx="80" cy="95" r="8" fill="#2D2A26"/>
+                    <circle cx="120" cy="95" r="8" fill="#2D2A26"/>
+                    <circle cx="83" cy="92" r="3" fill="white"/>
+                    <circle cx="123" cy="92" r="3" fill="white"/>
+                    <path d="M 85 112 Q 100 122 115 112" stroke="#2D2A26" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <rect x="80" y="135" width="40" height="15" rx="6" fill="#2D2A26"/>
+                    <circle cx="90" cy="142" r="2.5" fill="#4ECDC4"/>
+                    <circle cx="100" cy="142" r="2.5" fill="#FCD34D"/>
+                    <circle cx="110" cy="142" r="2.5" fill="#FF6B6B"/>
+                </svg>
             </div>
         </div>
-    </section>
+
+        {{-- Buttons --}}
+        <div class="flex flex-wrap gap-3 justify-center">
+            @guest
+                <a href="{{ route('register') }}" class="btn-kid bg-kid-blue text-white text-base md:text-lg px-8 py-4">
+                    <span>{{ __('ui.hero_cta') }}</span>
+                    <x-lucide-arrow-right class="w-5 h-5 ml-2" stroke-width="2.5" />
+                </a>
+                <a href="{{ route('login') }}" class="btn-kid bg-white text-kid-text border-2 border-gray-200 text-base md:text-lg px-6 py-4">
+                    {{ __('ui.hero_cta_secondary') }}
+                </a>
+            @else
+                @php
+                    $dashRoute = auth()->user()->isAdmin()
+                        ? route('admin.dashboard')
+                        : (auth()->user()->isParent()
+                            ? route('parent.dashboard')
+                            : route('student.dashboard'));
+                @endphp
+                <a href="{{ $dashRoute }}" class="btn-kid bg-kid-blue text-white text-base md:text-lg px-8 py-4">
+                    <span>{{ __('ui.hero_cta') }}</span>
+                    <x-lucide-arrow-right class="w-5 h-5 ml-2" stroke-width="2.5" />
+                </a>
+            @endguest
+        </div>
+    </div>
+</section>
 
     {{-- ==================== ADVANTAGES (Bento) ==================== --}}
     <section class="max-w-6xl mx-auto px-6 py-16">

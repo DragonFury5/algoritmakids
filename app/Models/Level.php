@@ -21,6 +21,7 @@ class Level extends Model
         'game_type',
         'game_data',
         'order',
+        'tier',
     ];
 
     protected $casts = [
@@ -52,5 +53,10 @@ class Level extends Model
     return $this->game_type === 'robot_path'
         ? route('play.robot', $this)
         : route('play.pattern', $this);
+}
+
+public function scopeForTier($query, string $tier)
+{
+    return $query->where('tier', $tier);
 }
 }

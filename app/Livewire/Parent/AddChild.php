@@ -14,20 +14,22 @@ class AddChild extends Component
     public string $email = '';
     public string $password = '';
     public string $avatar = 'robot-mint';
+    public string $tier = 'rookie';
 
-    protected function rules(): array
-    {
-        return [
-            'name' => 'required|string|min:2|max:60',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-            'avatar' => 'required|in:robot-blue,robot-green,robot-yellow,robot-coral,robot-purple,robot-mint',
-        ];
-    }
+   protected function rules(): array
+{
+    return [
+        'name' => 'required|string|min:2|max:60',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|min:6',
+        'avatar' => 'required|in:robot-blue,robot-green,robot-yellow,robot-coral,robot-purple,robot-mint',
+        'tier' => 'required|in:rookie,explorer,pro,hacker',
+    ];
+}
 
     public function openModal(): void
     {
-        $this->reset(['name', 'email', 'password', 'avatar']);
+        $this->reset(['name', 'email', 'password', 'avatar', 'tier']);
         $this->showModal = true;
     }
 
@@ -49,6 +51,7 @@ class AddChild extends Component
             'language' => auth()->user()->language,
             'parent_id' => auth()->id(),
             'sound_enabled' => true,
+            'tier' => $this->tier
         ]);
 
         $this->showModal = false;

@@ -9,22 +9,26 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class Dashboard extends Component
 {
-    public function render()
-    {
-        $user = auth()->user();
+   public function render()
+{
+    $user = auth()->user();
+    $tier = $user->tier;
 
-        $modules = Module::with('levels')->orderBy('order')->get();
+    $modules = \App\Models\Module::with(['levels' => function ($q) use ($tier) {
+        $q->where('tier', $tier)->orderBy('order');
+    }])
+    ->orderBy('order')
+    ->get()
+    ->filter(fn ($m) => $m->levels->count() > 0);
 
-        // Total stars for the header
-        $totalStars = $user->progress()->sum('stars');
+    $totalStars = $user->progress()->sum('stars');
+    $badgeCount = $user->badges()->count();
 
-        // Badge count
-        $badgeCount = $user->badges()->count();
-
-        return view('livewire.student.dashboard', [
-            'modules' => $modules,
-            'totalStars' => $totalStars,
-            'badgeCount' => $badgeCount,
-        ]);
-    }
+    return view('livewire.student.dashboard', [
+        'modules' => $modules,
+        'totalStars' => $totalStars,
+        'badgeCount' => $badgeCount,
+        'tier' => $tier,
+    ]);
+}
 }

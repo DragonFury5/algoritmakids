@@ -53,10 +53,15 @@
                             <x-lucide-bot class="w-8 h-8 text-white" stroke-width="2" />
                         </div>
 
-                        <div>
-                            <h3 class="font-extrabold text-lg">{{ $child->name }}</h3>
-                            <p class="text-sm text-gray-500">{{ $child->email }}</p>
-                        </div>
+                    <div class="flex-1 min-w-0">
+    <h3 class="font-extrabold text-lg truncate">{{ $child->name }}</h3>
+    <p class="text-sm text-gray-500 truncate">{{ $child->email }}</p>
+    @php $tier = $child->tierConfig(); @endphp
+    <span class="inline-flex items-center gap-1 text-xs font-bold text-kid-blue mt-1">
+        <x-dynamic-component :component="'lucide-' . $tier['icon']" class="w-3 h-3" stroke-width="2.5" />
+        {{ $tier['label_' . app()->getLocale()] }}
+    </span>
+</div>
                     </div>
 
                     <div class="flex justify-between text-sm text-gray-600 mb-4">

@@ -6,9 +6,18 @@
                 <h1 class="text-2xl font-extrabold">
                     {{ app()->getLocale() === 'id' ? 'Hai' : 'Hi' }}, {{ auth()->user()->name }}!
                 </h1>
-                <p class="text-gray-500">
-                    {{ app()->getLocale() === 'id' ? 'Ayo belajar coding hari ini!' : 'Let\'s learn coding today!' }}
-                </p>
+              @php $tierCfg = config('tiers.' . $tier); @endphp
+<div class="flex items-center gap-2 mt-1">
+    <span class="inline-flex items-center gap-1 text-xs font-bold text-kid-blue">
+        <x-dynamic-component :component="'lucide-' . $tierCfg['icon']" class="w-3 h-3" stroke-width="2.5" />
+        {{ $tierCfg['label_' . app()->getLocale()] }}
+        <span class="text-gray-400 font-normal">· {{ $tierCfg['ages'] }}</span>
+    </span>
+    <span class="text-gray-300">·</span>
+    <span class="text-gray-500 text-xs">
+        {{ app()->getLocale() === 'id' ? 'Ayo belajar!' : 'Let\'s learn!' }}
+    </span>
+</div>
             </div>
         </div>
 
