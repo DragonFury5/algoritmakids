@@ -9,36 +9,38 @@
 <body class="bg-kid-bg font-body text-kid-text antialiased overflow-x-hidden">
 
     {{-- ==================== NAVBAR ==================== --}}
-    <nav class="bg-white/90 backdrop-blur border-b border-gray-200 sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="text-2xl font-extrabold">
-                <span class="text-kid-blue">Algoritma</span><span class="text-kid-mint">Kids</span>
-            </a>
+<nav class="bg-white/90 backdrop-blur border-b border-gray-200 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-2">
+        <a href="{{ route('home') }}" class="text-lg md:text-2xl font-extrabold shrink-0">
+            <span class="text-kid-blue">Algoritma</span><span class="text-kid-mint">Kids</span>
+        </a>
 
-            <div class="flex items-center gap-4 text-sm">
-                <div class="flex gap-1 bg-kid-bg rounded-full p-1">
-                    <a href="{{ route('lang.switch', 'id') }}"
-                       class="px-3 py-1 rounded-full {{ app()->getLocale() === 'id' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">ID</a>
-                    <a href="{{ route('lang.switch', 'en') }}"
-                       class="px-3 py-1 rounded-full {{ app()->getLocale() === 'en' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">EN</a>
-                </div>
-
-                @auth
-                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->user()->isParent() ? route('parent.dashboard') : route('student.dashboard')) }}"
-                       class="font-bold text-kid-blue hover:underline">
-                        {{ __('ui.dashboard') }}
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="font-bold text-kid-text hover:text-kid-blue">
-                        {{ __('ui.login') }}
-                    </a>
-                    <a href="{{ route('register') }}" class="btn-kid bg-kid-blue text-white text-sm">
-                        {{ __('ui.register') }}
-                    </a>
-                @endauth
+        <div class="flex items-center gap-2 md:gap-4 text-sm min-w-0">
+            <div class="flex gap-0.5 bg-kid-bg rounded-full p-1 shrink-0">
+                <a href="{{ route('lang.switch', 'id') }}"
+                   class="px-2 md:px-3 py-1 rounded-full text-xs md:text-sm
+                          {{ app()->getLocale() === 'id' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">ID</a>
+                <a href="{{ route('lang.switch', 'en') }}"
+                   class="px-2 md:px-3 py-1 rounded-full text-xs md:text-sm
+                          {{ app()->getLocale() === 'en' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">EN</a>
             </div>
+
+            @auth
+                <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->user()->isParent() ? route('parent.dashboard') : route('student.dashboard')) }}"
+                   class="font-bold text-kid-blue hover:underline text-xs md:text-sm whitespace-nowrap">
+                    {{ __('ui.dashboard') }}
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="font-bold text-kid-text hover:text-kid-blue text-xs md:text-sm whitespace-nowrap">
+                    {{ __('ui.login') }}
+                </a>
+                <a href="{{ route('register') }}" class="btn-kid bg-kid-blue text-white text-xs md:text-sm px-3 md:px-6 py-2">
+                    {{ __('ui.register') }}
+                </a>
+            @endauth
         </div>
-    </nav>
+    </div>
+</nav>
 
     {{-- ==================== HERO ==================== --}}
     <section class="relative overflow-hidden">

@@ -9,6 +9,7 @@
         font-family: 'Nunito', sans-serif;
         background-color: #FFF8F0;
         color: #2D2A26;
+        overflow-x: hidden;
     }
 
     h1, h2, h3, h4 {

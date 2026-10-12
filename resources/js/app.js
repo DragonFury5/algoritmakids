@@ -1,5 +1,6 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('robotGame', (config) => ({
+        windowWidth: window.innerWidth,
         width: config.width,
         height: config.height,
         start: config.start,
@@ -21,6 +22,7 @@ document.addEventListener('alpine:init', () => {
         init() {
             this.restoreProgress();
             this.$watch('program', () => this.saveProgress(), { deep: true });
+            this.$watch('windowWidth', () => {});
         },
 
         saveProgress() {
@@ -49,16 +51,32 @@ document.addEventListener('alpine:init', () => {
             try { localStorage.removeItem('robotPath:' + this.levelId); } catch (e) {}
         },
 
-        get cell() { return 64; },
+
+        get availableWidth() {
+    const w = this.windowWidth;
+    const isTwoCol = w >= 1024;
+    return isTwoCol
+        ? Math.min(540, Math.floor(w * 0.5))
+        : w - 48;
+},
+
+get cell() {
+    const byWidth = Math.floor(this.availableWidth / this.width);
+    return Math.max(44, Math.min(64, byWidth));
+},
+
+get needsScroll() {
+    return this.width * this.cell > this.availableWidth;
+},
 
         get robotStyle() {
             return `transform: translate(${this.robot.x * this.cell}px, ${this.robot.y * this.cell}px);`;
         },
 
-        get robotRotation() {
-            const a = { right: 0, down: 90, left: 180, up: 270 };
-            return `rotate(${a[this.robot.dir]}deg)`;
-        },
+       get robotRotation() {
+    const a = { right: 0, down: 90, left: 180, up: 270 };
+    return `transform: rotate(${a[this.robot.dir] ?? 0}deg);`;   // ✅ correct
+},
 
         isWall(x, y) { return this.walls.includes(x + ',' + y); },
 
@@ -225,6 +243,7 @@ document.addEventListener('alpine:init', () => {
         },
     }));
         Alpine.data('patternFixer', (config) => ({
+            windowWidth: window.innerWidth,
         width: config.width,
         height: config.height,
         start: config.start,
@@ -246,6 +265,7 @@ document.addEventListener('alpine:init', () => {
 
         init() {
             this.resetProgram();
+            this.$watch('windowWidth', () => {});
         },
 
         resetProgram() {
@@ -254,7 +274,22 @@ document.addEventListener('alpine:init', () => {
             this.resetRobot();
         },
 
-        get cell() { return 64; },
+        get availableWidth() {
+    const w = this.windowWidth;
+    const isTwoCol = w >= 1024;
+    return isTwoCol
+        ? Math.min(540, Math.floor(w * 0.5))
+        : w - 48;
+},
+
+get cell() {
+    const byWidth = Math.floor(this.availableWidth / this.width);
+    return Math.max(44, Math.min(64, byWidth));
+},
+
+get needsScroll() {
+    return this.width * this.cell > this.availableWidth;
+},
 
         get robotStyle() {
             return `transform: translate(${this.robot.x * this.cell}px, ${this.robot.y * this.cell}px);`;
