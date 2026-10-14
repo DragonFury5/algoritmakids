@@ -9,33 +9,29 @@
 </head>
 <body class="bg-kid-bg font-body text-kid-text antialiased min-h-screen">
 
-    <nav class="bg-white border-b border-gray-200">
-    <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-2">
-        <a href="{{ route('home') }}" class="text-lg md:text-xl font-extrabold shrink-0">
+   <nav class="bg-white border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-3">
+        <a href="{{ route('home') }}" class="text-xl md:text-2xl font-extrabold shrink-0">
             <span class="text-kid-blue">Algoritma</span><span class="text-kid-mint">Kids</span>
         </a>
 
-        <div class="flex items-center gap-2 md:gap-4 text-sm min-w-0">
-            <div class="flex gap-0.5 bg-kid-bg rounded-full p-1 shrink-0">
-                <a href="{{ route('lang.switch', 'id') }}"
-                   class="px-2 md:px-3 py-1 rounded-full text-xs md:text-sm
-                          {{ app()->getLocale() === 'id' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">
-                    ID
-                </a>
-                <a href="{{ route('lang.switch', 'en') }}"
-                   class="px-2 md:px-3 py-1 rounded-full text-xs md:text-sm
-                          {{ app()->getLocale() === 'en' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">
-                    EN
-                </a>
-            </div>
-
-            <span class="hidden md:inline text-gray-500 truncate max-w-[120px]">
+        <div class="flex items-center gap-3 md:gap-4 min-w-0">
+            <span class="hidden md:inline text-gray-500 truncate max-w-[140px]">
                 {{ auth()->user()->name }}
             </span>
 
+            {{-- Gear → Settings --}}
+            <a href="{{ route('settings') }}"
+               class="group p-2 rounded-full hover:bg-kid-bg transition"
+               title="{{ app()->getLocale() === 'id' ? 'Pengaturan' : 'Settings' }}">
+                <x-lucide-settings
+                    class="w-5 h-5 text-kid-text transition-transform duration-500 ease-out group-hover:rotate-180"
+                    stroke-width="2.5" />
+            </a>
+
             <form method="POST" action="{{ route('logout') }}" class="shrink-0">
                 @csrf
-                <button class="text-kid-coral font-bold text-xs md:text-sm hover:underline whitespace-nowrap">
+                <button class="text-kid-coral font-bold text-sm md:text-base hover:underline whitespace-nowrap px-2 py-1">
                     {{ __('ui.logout') }}
                 </button>
             </form>

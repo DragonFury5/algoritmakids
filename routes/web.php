@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Game\PatternFixer;
 use App\Livewire\Game\RobotPath;
+use App\Livewire\Settings\Page as SettingsPage;
 
 
 Route::get('/', function () {
@@ -44,8 +45,10 @@ use App\Livewire\Parent\Dashboard as ParentDashboard;
 use App\Livewire\Student\Dashboard as StudentDashboard;
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/settings', SettingsPage::class)->name('settings');
     Route::middleware('role:parent')->group(function () {
         Route::get('/parent', ParentDashboard::class)->name('parent.dashboard');
+
     });
 
     Route::middleware('role:student')->group(function () {

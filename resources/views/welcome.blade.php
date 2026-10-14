@@ -14,7 +14,8 @@
         <a href="{{ route('home') }}" class="text-lg md:text-2xl font-extrabold shrink-0">
             <span class="text-kid-blue">Algoritma</span><span class="text-kid-mint">Kids</span>
         </a>
-
+     
+        @guest
         <div class="flex items-center gap-2 md:gap-4 text-sm min-w-0">
             <div class="flex gap-0.5 bg-kid-bg rounded-full p-1 shrink-0">
                 <a href="{{ route('lang.switch', 'id') }}"
@@ -24,6 +25,7 @@
                    class="px-2 md:px-3 py-1 rounded-full text-xs md:text-sm
                           {{ app()->getLocale() === 'en' ? 'bg-kid-blue text-white' : 'text-gray-600' }}">EN</a>
             </div>
+            @endguest
 
             @auth
                 <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->user()->isParent() ? route('parent.dashboard') : route('student.dashboard')) }}"
