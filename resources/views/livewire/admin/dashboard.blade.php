@@ -10,11 +10,18 @@
             </p>
         </div>
 
-        <a href="{{ route('admin.modules') }}"
-           class="btn-kid bg-white border-2 border-gray-200 text-kid-text gap-2 w-full md:w-auto justify-center">
-            <x-lucide-layers class="w-5 h-5" stroke-width="2.5" />
-            <span>{{ app()->getLocale() === 'id' ? 'Kelola Modul' : 'Manage Modules' }}</span>
-        </a>
+    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+    <a href="{{ route('admin.modules') }}"
+       class="btn-kid bg-white border-2 border-gray-200 text-kid-text gap-2 flex-1 md:flex-none justify-center">
+        <x-lucide-layers class="w-5 h-5" stroke-width="2.5" />
+        <span>{{ app()->getLocale() === 'id' ? 'Kelola Modul' : 'Manage Modules' }}</span>
+    </a>
+    <a href="{{ route('admin.levels') }}"
+       class="btn-kid bg-white border-2 border-gray-200 text-kid-text gap-2 flex-1 md:flex-none justify-center">
+        <x-lucide-gamepad-2 class="w-5 h-5" stroke-width="2.5" />
+        <span>{{ app()->getLocale() === 'id' ? 'Kelola Level' : 'Manage Levels' }}</span>
+    </a>
+</div>
     </div>
 
     @if(session()->has('success'))
