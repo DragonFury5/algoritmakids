@@ -39,15 +39,11 @@ class Page extends Component
             'avatar' => 'required|in:robot-blue,robot-green,robot-yellow,robot-coral,robot-purple,robot-mint',
         ];
 
-        if (! $user->isStudent()) {
-            $rules['name'] = 'required|string|min:2|max:60';
-        }
+     
 
         $this->validate($rules);
 
-        if (! $user->isStudent()) {
-            $user->name = $this->name;
-        }
+
         $user->avatar = $this->avatar;
         $user->save();
 

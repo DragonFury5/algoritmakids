@@ -1,10 +1,11 @@
 
-<style>
-    [x-cloak] { display: none !important; }
-</style>
 
 <div class="max-w-3xl mx-auto"
      x-data="{ tab: 'profile' }">
+
+     <style>
+    [x-cloak] { display: none !important; }
+</style>
 
     {{-- Header --}}
     <div class="mb-6">
@@ -31,6 +32,7 @@
                 if (! auth()->user()->isStudent()) {
                     $tabs[] = ['key' => 'security', 'icon' => 'lock', 'en' => 'Security', 'id' => 'Keamanan'];
                 }
+                $tabs[] = ['key' => 'about', 'icon' => 'info', 'en' => 'About', 'id' => 'Tentang'];
             @endphp
 
             @foreach($tabs as $t)
@@ -47,6 +49,96 @@
         </nav>
 
         <div class="p-6 md:p-8">
+
+               {{-- ==================== ABOUT ==================== --}}
+<div x-show="tab === 'about'" x-cloak>
+    <h2 class="text-lg font-extrabold mb-4">
+        {{ app()->getLocale() === 'id' ? 'Tentang AlgoritmaKids' : 'About AlgoritmaKids' }}
+    </h2>
+
+    {{-- Logo + tagline --}}
+    <div class="text-center py-6 mb-6">
+        <div class="text-3xl font-extrabold mb-2">
+            <span class="text-kid-blue">Algoritma</span><span class="text-kid-mint">Kids</span>
+        </div>
+        <p class="text-gray-500 text-sm max-w-md mx-auto">
+            {{ app()->getLocale() === 'id'
+                ? 'Belajar logika coding melalui permainan yang menyenangkan, aman, dan gratis.'
+                : 'Learn coding logic through fun, safe, and free games.' }}
+        </p>
+        <div class="text-xs text-gray-400 mt-3">v1.0 · {{ now()->format('M Y') }}</div>
+    </div>
+
+    {{-- Info grid --}}
+    <div class="space-y-3">
+
+        <div class="flex items-start gap-3 p-4 rounded-kid bg-kid-bg">
+            <div class="w-9 h-9 rounded-full bg-kid-blue flex items-center justify-center text-white shrink-0">
+                <x-lucide-graduation-cap class="w-4 h-4" stroke-width="2.5" />
+            </div>
+            <div>
+                <div class="font-bold text-sm">
+                    {{ app()->getLocale() === 'id' ? 'Apa yang diajarkan?' : 'What do we teach?' }}
+                </div>
+                <div class="text-sm text-gray-500 mt-0.5">
+                    {{ app()->getLocale() === 'id'
+                        ? 'Urutan, pengulangan, dan kondisi — dasar berpikir komputasional.'
+                        : 'Sequencing, loops, and conditionals — the basics of computational thinking.' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-4 rounded-kid bg-kid-bg">
+            <div class="w-9 h-9 rounded-full bg-kid-mint flex items-center justify-center text-white shrink-0">
+                <x-lucide-shield-check class="w-4 h-4" stroke-width="2.5" />
+            </div>
+            <div>
+                <div class="font-bold text-sm">
+                    {{ app()->getLocale() === 'id' ? 'Aman & Bebas Iklan' : 'Safe & Ad-Free' }}
+                </div>
+                <div class="text-sm text-gray-500 mt-0.5">
+                    {{ app()->getLocale() === 'id'
+                        ? 'Tanpa iklan, tanpa chat, tanpa pelacakan. Hanya belajar.'
+                        : 'No ads, no chat, no tracking. Just learning.' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-4 rounded-kid bg-kid-bg">
+            <div class="w-9 h-9 rounded-full bg-kid-yellow flex items-center justify-center text-kid-text shrink-0">
+                <x-lucide-code class="w-4 h-4" stroke-width="2.5" />
+            </div>
+            <div>
+                <div class="font-bold text-sm">
+                    {{ app()->getLocale() === 'id' ? 'Dibuat oleh' : 'Built by' }}
+                </div>
+                <div class="text-sm text-gray-500 mt-0.5">
+                    {{ app()->getLocale() === 'id'
+                        ? 'Sebuah proyek mahasiswa, terinspirasi dari AlgoritmaKids.com'
+                        : 'A student project, inspired by AlgoritmaKids.com' }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Links --}}
+    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+        <a href="{{ route('privacy') }}"
+           class="flex-1 btn-kid bg-white border-2 border-gray-200 text-kid-text text-sm gap-2">
+            <x-lucide-file-text class="w-4 h-4" stroke-width="2.5" />
+            <span>{{ app()->getLocale() === 'id' ? 'Kebijakan Privasi' : 'Privacy Policy' }}</span>
+        </a>
+        <a href="mailto:hello@algoritmakids.test"
+           class="flex-1 btn-kid bg-white border-2 border-gray-200 text-kid-text text-sm gap-2">
+            <x-lucide-mail class="w-4 h-4" stroke-width="2.5" />
+            <span>{{ app()->getLocale() === 'id' ? 'Hubungi Kami' : 'Contact Us' }}</span>
+        </a>
+    </div>
+
+    <p class="text-center text-xs text-gray-400 mt-6">
+        © {{ date('Y') }} AlgoritmaKids. {{ __('ui.made_with_love') }}
+    </p>
+</div>
 
             {{-- ==================== PROFILE ==================== --}}
             <div x-show="tab === 'profile'" x-cloak>
@@ -86,16 +178,14 @@
                     </div>
 
                     {{-- Name (parents/admins only) --}}
-                    @if(! auth()->user()->isStudent())
-                        <div>
-                            <label class="block font-semibold mb-1 text-sm">
-                                {{ app()->getLocale() === 'id' ? 'Nama' : 'Name' }}
-                            </label>
-                            <input type="text" wire:model="name"
-                                   class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
-                            @error('name') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
-                        </div>
-                    @endif
+                  <div>
+    <label class="block font-semibold mb-1 text-sm">
+        {{ app()->getLocale() === 'id' ? 'Nama' : 'Name' }}
+    </label>
+    <input type="text" wire:model="name"
+           class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
+    @error('name') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
+</div>
 
                     {{-- Avatar --}}
                     <div>
