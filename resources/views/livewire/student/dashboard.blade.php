@@ -1,4 +1,52 @@
 <div>
+
+{{-- ==================== BADGE CELEBRATION ==================== --}}
+@if($showBadgeCelebration && $unseenBadges->isNotEmpty())
+    @php $firstBadge = $unseenBadges->first(); @endphp
+    <div class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4">
+        <div class="animate-pop-in bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full relative overflow-hidden">
+
+            {{-- Glow --}}
+            <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-kid-yellow/30 blur-3xl animate-pulse-soft"></div>
+            <div class="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-kid-coral/20 blur-3xl animate-pulse-soft" style="animation-delay: -1.5s;"></div>
+
+            <div class="relative">
+                {{-- Big badge --}}
+                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-kid-yellow to-kid-coral flex items-center justify-center mx-auto mb-4 shadow-lg animate-float">
+                    <x-dynamic-component :component="'lucide-' . $firstBadge->icon"
+                                         class="w-12 h-12 text-white" stroke-width="2" />
+                </div>
+
+                <div class="text-xs uppercase tracking-widest font-extrabold text-kid-coral mb-2">
+                    {{ app()->getLocale() === 'id' ? 'Lencana Baru!' : 'New Badge!' }}
+                </div>
+
+                <h2 class="text-2xl md:text-3xl font-extrabold mb-2">
+                    {{ $firstBadge->name }}
+                </h2>
+
+                <p class="text-gray-500 mb-6 text-sm">
+                    {{ app()->getLocale() === 'id'
+                        ? 'Kamu menyelesaikan semua level di modul ini. Hebat!'
+                        : 'You finished every level in this module. Amazing!' }}
+                </p>
+
+                @if($unseenBadges->count() > 1)
+                    <p class="text-xs text-gray-400 mb-4">
+                        +{{ $unseenBadges->count() - 1 }}
+                        {{ app()->getLocale() === 'id' ? 'lencana lainnya' : 'more badge(s)' }}
+                    </p>
+                @endif
+
+                <button wire:click="markBadgesSeen"
+                        class="btn-kid bg-kid-blue text-white w-full text-lg">
+                    <x-lucide-sparkles class="w-5 h-5 mr-2" stroke-width="2.5" />
+                    <span>{{ app()->getLocale() === 'id' ? 'Keren!' : 'Awesome!' }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+@endif
     {{-- ==================== HEADER ==================== --}}
     <div class="animate-pop-in bg-white rounded-kid border border-gray-200 p-5 md:p-6 mb-8">
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -183,4 +231,33 @@
             @endforeach
         </div>
     @endif
+
+    {{-- ==================== BADGES ==================== --}}
+@if($earnedBadges->isNotEmpty())
+    <div class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-extrabold">
+                {{ app()->getLocale() === 'id' ? 'Lencana' : 'Badges' }}
+            </h2>
+            <span class="text-xs text-gray-400 font-semibold">
+                {{ $earnedBadges->count() }}
+            </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            @foreach($earnedBadges as $badge)
+                <div class="bg-white rounded-kid border border-gray-200 p-4 text-center card-lift">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-kid-yellow to-kid-coral flex items-center justify-center mx-auto mb-3">
+                        <x-dynamic-component :component="'lucide-' . $badge->icon"
+                                             class="w-7 h-7 text-white" stroke-width="2.5" />
+                    </div>
+                    <div class="font-extrabold text-sm leading-tight">{{ $badge->name }}</div>
+                    <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mt-1">
+                       {{ \Carbon\Carbon::parse($badge->pivot->earned_at)->format('d M Y') }}
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
 </div>

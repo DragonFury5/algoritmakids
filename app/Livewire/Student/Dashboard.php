@@ -9,6 +9,14 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class Dashboard extends Component
 {
+    public bool $showBadgeCelebration = true;
+
+    public function markBadgesSeen(): void
+    {
+        auth()->user()->markBadgesSeen();
+        $this->showBadgeCelebration = false;
+    }
+
     public function render()
     {
         $user = auth()->user();
@@ -38,7 +46,6 @@ class Dashboard extends Component
                 return $progressByLevel->has($level->id);
             })->count();
 
-            // Deterministic style per module slug
             $colors = ['kid-blue', 'kid-mint', 'kid-purple', 'kid-yellow'];
             $icons  = ['target', 'repeat', 'git-branch', 'blocks', 'puzzle', 'lightbulb'];
 
@@ -58,11 +65,17 @@ class Dashboard extends Component
             return $module;
         });
 
+        // Badges
+        $earnedBadges = $user->badges()->orderByDesc('user_badges.earned_at')->get();
+        $unseenBadges = $user->unseenBadges();
+
         return view('livewire.student.dashboard', [
-            'modules'    => $modules,
-            'totalStars' => $user->progress()->sum('stars'),
-            'badgeCount' => $user->badges()->count(),
-            'tier'       => $tier,
+            'modules'         => $modules,
+            'totalStars'      => $user->progress()->sum('stars'),
+            'badgeCount'      => $earnedBadges->count(),
+            'tier'            => $tier,
+            'earnedBadges'    => $earnedBadges,
+            'unseenBadges'    => $unseenBadges,
         ]);
     }
 }

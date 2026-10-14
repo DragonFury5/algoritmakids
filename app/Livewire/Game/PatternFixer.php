@@ -47,6 +47,8 @@ class PatternFixer extends Component
         $progress->save();
 
         $this->previousStars = $progress->stars;
+        // Check for badge award
+auth()->user()->checkModuleCompletion($this->level->module_id);
     }
 
     public function render()

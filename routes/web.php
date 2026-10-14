@@ -8,7 +8,7 @@ use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Game\PatternFixer;
 use App\Livewire\Game\RobotPath;
 use App\Livewire\Settings\Page as SettingsPage;
-
+use App\Livewire\Admin\Modules\Index as ModulesIndex;
 
 Route::get('/', function () {
     return view('welcome');
@@ -58,5 +58,10 @@ Route::middleware(['auth'])->group(function () {
 });
     Route::middleware('role:admin')->group(function () {
         Route::view('/admin', 'placeholder')->name('admin.dashboard');
+
+        Route::middleware('role:admin')->group(function () {
+    Route::get('/admin', AdminDashboard::class)->name('admin.dashboard');
+    Route::get('/admin/modules', ModulesIndex::class)->name('admin.modules');
+});
     });
 });

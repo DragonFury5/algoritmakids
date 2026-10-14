@@ -91,4 +91,60 @@ class User extends Authenticatable
 {
     return config('tiers.' . $this->tier) ?? config('tiers.rookie');
 }
+
+public function checkModuleCompletion(int $moduleId): ?\App\Models\Badge
+{
+    // All levels of this module for this user's tier
+    $levelIds = \App\Models\Level::where('module_id', $moduleId)
+        ->where('tier', $this->tier)
+        ->pluck('id');
+
+    if ($levelIds->isEmpty()) {
+        return null;
+    }
+
+    // Did the user complete every level?
+    $completed = $this->progress()
+        ->whereIn('level_id', $levelIds)
+        ->whereNotNull('completed_at')
+        ->count();
+
+    if ($completed < $levelIds->count()) {
+        return null;
+    }
+
+    // Find this module's badge
+    $badge = \App\Models\Badge::where('module_id', $moduleId)->first();
+    if (! $badge) {
+        return null;
+    }
+
+    // Already earned?
+    if ($this->badges()->where('badge_id', $badge->id)->exists()) {
+        return null;
+    }
+
+    // Award it (seen_at stays null → celebration)
+    $this->badges()->attach($badge->id, [
+        'earned_at' => now(),
+        'seen_at'   => null,
+    ]);
+
+    return $badge;
+}
+
+public function unseenBadges()
+{
+    return $this->badges()
+        ->wherePivotNull('seen_at')
+        ->get();
+}
+
+public function markBadgesSeen(): void
+{
+    \DB::table('user_badges')
+        ->where('user_id', $this->id)
+        ->whereNull('seen_at')
+        ->update(['seen_at' => now()]);
+}
 }
