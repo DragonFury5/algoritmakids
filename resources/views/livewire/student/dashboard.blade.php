@@ -3,7 +3,7 @@
 {{-- ==================== BADGE CELEBRATION ==================== --}}
 @if($showBadgeCelebration && $unseenBadges->isNotEmpty())
     @php $firstBadge = $unseenBadges->first(); @endphp
-    <div class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4">
+    <div class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" x-init="window.sound.badge()">
         <div class="animate-pop-in bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full relative overflow-hidden">
 
             {{-- Glow --}}

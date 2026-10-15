@@ -1,4 +1,69 @@
+// ==================== SOUND ENGINE ====================
+const SoundEngine = (() => {
+    let ctx = null;
+
+    function getCtx() {
+        if (! ctx) {
+            try {
+                ctx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) { return null; }
+        }
+        if (ctx.state === 'suspended') ctx.resume();
+        return ctx;
+    }
+
+    function beep(freq, duration, type = 'sine', volume = 0.15, delay = 0) {
+        if (! window.soundEnabled) return;
+        const c = getCtx();
+        if (! c) return;
+
+        const osc  = c.createOscillator();
+        const gain = c.createGain();
+        const t    = c.currentTime + delay;
+
+        osc.type = type;
+        osc.frequency.value = freq;
+
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(volume, t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+
+        osc.connect(gain);
+        gain.connect(c.destination);
+
+        osc.start(t);
+        osc.stop(t + duration + 0.05);
+    }
+
+    return {
+        click() { beep(900, 0.05, 'triangle', 0.08); },
+        pop()   { beep(600, 0.07, 'sine', 0.10); beep(950, 0.06, 'sine', 0.07, 0.03); },
+        move()  { beep(320, 0.07, 'sine', 0.06); },
+        turn()  { beep(450, 0.08, 'triangle', 0.07); },
+        star()  { beep(1200, 0.10, 'triangle', 0.10); },
+        win()   {
+            beep(523, 0.15, 'sine', 0.14, 0);
+            beep(659, 0.15, 'sine', 0.14, 0.14);
+            beep(784, 0.30, 'sine', 0.14, 0.28);
+        },
+        fail()  {
+            beep(220, 0.15, 'sine', 0.12, 0);
+            beep(165, 0.30, 'sine', 0.12, 0.14);
+        },
+        badge() {
+            beep(1046, 0.10, 'triangle', 0.12, 0);
+            beep(1318, 0.10, 'triangle', 0.12, 0.10);
+            beep(1568, 0.12, 'triangle', 0.12, 0.20);
+            beep(2093, 0.30, 'triangle', 0.14, 0.32);
+        },
+    };
+})();
+
+window.sound = SoundEngine;
+
+// ==================== ALPINE COMPONENTS ====================
 document.addEventListener('alpine:init', () => {
+
     Alpine.data('robotGame', (config) => ({
         windowWidth: window.innerWidth,
         width: config.width,
@@ -51,32 +116,31 @@ document.addEventListener('alpine:init', () => {
             try { localStorage.removeItem('robotPath:' + this.levelId); } catch (e) {}
         },
 
-
         get availableWidth() {
-    const w = this.windowWidth;
-    const isTwoCol = w >= 1024;
-    return isTwoCol
-        ? Math.min(540, Math.floor(w * 0.5))
-        : w - 48;
-},
+            const w = this.windowWidth;
+            const isTwoCol = w >= 1024;
+            return isTwoCol
+                ? Math.min(540, Math.floor(w * 0.5))
+                : w - 48;
+        },
 
-get cell() {
-    const byWidth = Math.floor(this.availableWidth / this.width);
-    return Math.max(44, Math.min(64, byWidth));
-},
+        get cell() {
+            const byWidth = Math.floor(this.availableWidth / this.width);
+            return Math.max(44, Math.min(64, byWidth));
+        },
 
-get needsScroll() {
-    return this.width * this.cell > this.availableWidth;
-},
+        get needsScroll() {
+            return this.width * this.cell > this.availableWidth;
+        },
 
         get robotStyle() {
             return `transform: translate(${this.robot.x * this.cell}px, ${this.robot.y * this.cell}px);`;
         },
 
-       get robotRotation() {
-    const a = { right: 0, down: 90, left: 180, up: 270 };
-    return `transform: rotate(${a[this.robot.dir] ?? 0}deg);`;   // ✅ correct
-},
+        get robotRotation() {
+            const a = { right: 0, down: 90, left: 180, up: 270 };
+            return `transform: rotate(${a[this.robot.dir] ?? 0}deg);`;
+        },
 
         isWall(x, y) { return this.walls.includes(x + ',' + y); },
 
@@ -100,12 +164,14 @@ get needsScroll() {
                 }
                 if (this.program.length >= this.maxBlocks) return;
                 this.program.push({ type: 'loop', count: 2, body: [] });
+                window.sound.pop();
                 return;
             }
 
             const container = this.getCurrentContainer();
             if (container.length >= this.maxBlocks) return;
             container.push({ type });
+            window.sound.pop();
         },
 
         removeBlock(i) {
@@ -114,12 +180,14 @@ get needsScroll() {
             if (this.focusedContainer !== 'main' && ! this.program[parseInt(this.focusedContainer)]) {
                 this.focusedContainer = 'main';
             }
+            window.sound.click();
         },
 
         removeLoopBlock(loopIdx, i) {
             if (this.running) return;
             const loop = this.program[loopIdx];
             if (loop && loop.body) loop.body.splice(i, 1);
+            window.sound.click();
         },
 
         setLoopCount(loopIdx, delta) {
@@ -127,6 +195,7 @@ get needsScroll() {
             const loop = this.program[loopIdx];
             if (! loop) return;
             loop.count = Math.max(1, Math.min(10, (loop.count || 2) + delta));
+            window.sound.click();
         },
 
         focusMain() { if (! this.running) this.focusedContainer = 'main'; },
@@ -138,6 +207,7 @@ get needsScroll() {
             this.focusedContainer = 'main';
             this.reset();
             this.clearSaved();
+            window.sound.click();
         },
 
         reset() {
@@ -181,6 +251,7 @@ get needsScroll() {
             if (this.running || this.won) return;
             if (this.program.length === 0) {
                 this.showFailModal = true;
+                window.sound.fail();
                 return;
             }
 
@@ -196,6 +267,7 @@ get needsScroll() {
                 if (! ok) {
                     this.running = false;
                     this.showFailModal = true;
+                    window.sound.fail();
                     return;
                 }
                 if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
@@ -207,12 +279,14 @@ get needsScroll() {
                     this.clearSaved();
                     await this.$wire.completeLevel(this.starsEarned);
                     this.showWinModal = true;
+                    window.sound.win();
                     return;
                 }
             }
 
             this.running = false;
             this.showFailModal = true;
+            window.sound.fail();
         },
 
         async execute(block) {
@@ -224,26 +298,30 @@ get needsScroll() {
                 if (this.isWall(nx, ny)) return false;
                 this.robot.x = nx;
                 this.robot.y = ny;
+                window.sound.move();
                 await this.sleep(400);
                 return true;
             }
             if (block.type === 'left') {
                 const o = ['right','up','left','down'];
                 this.robot.dir = o[(o.indexOf(this.robot.dir) + 1) % 4];
+                window.sound.turn();
                 await this.sleep(250);
                 return true;
             }
             if (block.type === 'right') {
                 const o = ['right','down','left','up'];
                 this.robot.dir = o[(o.indexOf(this.robot.dir) + 1) % 4];
+                window.sound.turn();
                 await this.sleep(250);
                 return true;
             }
             return true;
         },
     }));
-        Alpine.data('patternFixer', (config) => ({
-            windowWidth: window.innerWidth,
+
+    Alpine.data('patternFixer', (config) => ({
+        windowWidth: window.innerWidth,
         width: config.width,
         height: config.height,
         start: config.start,
@@ -275,21 +353,21 @@ get needsScroll() {
         },
 
         get availableWidth() {
-    const w = this.windowWidth;
-    const isTwoCol = w >= 1024;
-    return isTwoCol
-        ? Math.min(540, Math.floor(w * 0.5))
-        : w - 48;
-},
+            const w = this.windowWidth;
+            const isTwoCol = w >= 1024;
+            return isTwoCol
+                ? Math.min(540, Math.floor(w * 0.5))
+                : w - 48;
+        },
 
-get cell() {
-    const byWidth = Math.floor(this.availableWidth / this.width);
-    return Math.max(44, Math.min(64, byWidth));
-},
+        get cell() {
+            const byWidth = Math.floor(this.availableWidth / this.width);
+            return Math.max(44, Math.min(64, byWidth));
+        },
 
-get needsScroll() {
-    return this.width * this.cell > this.availableWidth;
-},
+        get needsScroll() {
+            return this.width * this.cell > this.availableWidth;
+        },
 
         get robotStyle() {
             return `transform: translate(${this.robot.x * this.cell}px, ${this.robot.y * this.cell}px);`;
@@ -305,6 +383,7 @@ get needsScroll() {
         openEditor(i) {
             if (this.running || this.won) return;
             this.editingIndex = i;
+            window.sound.click();
         },
 
         cancelEdit() {
@@ -315,6 +394,7 @@ get needsScroll() {
             if (this.running || this.won) return;
             this.program[i].type = type;
             this.editingIndex = null;
+            window.sound.pop();
             await this.runProgram();
         },
 
@@ -343,6 +423,7 @@ get needsScroll() {
                 if (! ok) {
                     this.running = false;
                     this.showFailModal = true;
+                    window.sound.fail();
                     return;
                 }
                 if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
@@ -351,12 +432,14 @@ get needsScroll() {
                     this.running = false;
                     await this.$wire.completeLevel(this.starsEarned);
                     this.showWinModal = true;
+                    window.sound.win();
                     return;
                 }
             }
 
             this.running = false;
             this.showFailModal = true;
+            window.sound.fail();
         },
 
         async execute(block) {
@@ -368,18 +451,21 @@ get needsScroll() {
                 if (this.isWall(nx, ny)) return false;
                 this.robot.x = nx;
                 this.robot.y = ny;
+                window.sound.move();
                 await this.sleep(400);
                 return true;
             }
             if (block.type === 'left') {
                 const o = ['right','up','left','down'];
                 this.robot.dir = o[(o.indexOf(this.robot.dir) + 1) % 4];
+                window.sound.turn();
                 await this.sleep(250);
                 return true;
             }
             if (block.type === 'right') {
                 const o = ['right','down','left','up'];
                 this.robot.dir = o[(o.indexOf(this.robot.dir) + 1) % 4];
+                window.sound.turn();
                 await this.sleep(250);
                 return true;
             }
