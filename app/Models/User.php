@@ -24,6 +24,7 @@ class User extends Authenticatable
         'consent_given_at',
         'sound_enabled',
         'tier',
+        'paused_at',
     ];
 
     protected $hidden = [
@@ -35,6 +36,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'consent_given_at' => 'datetime',
         'sound_enabled' => 'boolean',
+        'paused_at' => 'datetime',
     ];
 
     // ----- Relationships -----
@@ -146,5 +148,20 @@ public function markBadgesSeen(): void
         ->where('user_id', $this->id)
         ->whereNull('seen_at')
         ->update(['seen_at' => now()]);
+}
+
+public function isPaused(): bool
+{
+    return $this->paused_at !== null;
+}
+
+public function pause(): void
+{
+    $this->update(['paused_at' => now()]);
+}
+
+public function resume(): void
+{
+    $this->update(['paused_at' => null]);
 }
 }

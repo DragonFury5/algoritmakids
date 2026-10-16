@@ -12,6 +12,7 @@ use App\Livewire\Settings\Page as SettingsPage;
 use App\Livewire\Student\Dashboard as StudentDashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Parent\Child\Show as ParentChildShow;
 
 // ---------- Public ----------
 Route::get('/', function () {
@@ -54,9 +55,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', SettingsPage::class)->name('settings');
 
     // Parent
-    Route::middleware('role:parent')->group(function () {
-        Route::get('/parent', ParentDashboard::class)->name('parent.dashboard');
-    });
+  Route::middleware('role:parent')->group(function () {
+    Route::get('/parent', ParentDashboard::class)->name('parent.dashboard');
+    Route::get('/parent/child/{child}', ParentChildShow::class)->name('parent.child.show');
+});
 
     // Student
     Route::middleware('role:student')->group(function () {

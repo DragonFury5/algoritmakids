@@ -63,7 +63,8 @@
                     $tierBg = $colorMap[$tierCfg['color']] ?? 'bg-kid-mint';
                 @endphp
 
-                <div class="bg-white rounded-kid border border-gray-200 p-4 md:p-5 card-lift">
+               <a href="{{ route('parent.child.show', $child) }}"
+   class="block bg-white rounded-kid border border-gray-200 p-4 md:p-5 card-lift hover:border-kid-blue transition">
                     <div class="flex items-center gap-3 md:gap-4">
 
                         {{-- Avatar --}}
@@ -118,7 +119,7 @@
                             </span>
                         </div>
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
     @endif
