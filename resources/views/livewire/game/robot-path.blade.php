@@ -8,7 +8,9 @@
         walls: {{ Js::from($level->game_data['walls']) }},
         max_blocks: {{ $level->game_data['max_blocks'] ?? 20 }},
         allow_loops: {{ !empty($level->game_data['allow_loops']) ? 'true' : 'false' }},
+        allow_conditionals: {{ !empty($level->game_data['allow_conditionals']) ? 'true' : 'false' }},
         level_id: {{ $level->id }}
+
      })">
 
     {{-- Header --}}
@@ -106,13 +108,27 @@
                         <x-lucide-rotate-cw class="w-5 h-5" stroke-width="2.5" />
                         <span>{{ app()->getLocale() === 'id' ? 'Kanan' : 'Right' }}</span>
                     </button>
-                    <template x-if="allowLoops">
-                        <button @click="addBlock('loop')" :disabled="running || won"
-                                class="btn-kid bg-kid-yellow text-kid-text gap-2">
-                            <x-lucide-repeat class="w-5 h-5" stroke-width="2.5" />
-                            <span>{{ app()->getLocale() === 'id' ? 'Ulangi' : 'Repeat' }}</span>
-                        </button>
-                    </template>
+                  <template x-if="allowLoops">
+    <button @click="addBlock('loop')" :disabled="running || won"
+            class="btn-kid bg-kid-yellow text-kid-text gap-2">
+        <x-lucide-repeat class="w-5 h-5" stroke-width="2.5" />
+        <span>{{ app()->getLocale() === 'id' ? 'Ulangi' : 'Repeat' }}</span>
+    </button>
+</template>
+<template x-if="allowConditionals">
+    <button @click="addBlock('if_empty')" :disabled="running || won"
+            class="btn-kid bg-white border-2 border-kid-mint text-kid-mint gap-2">
+        <x-lucide-check-circle class="w-5 h-5" stroke-width="2.5" />
+        <span>{{ app()->getLocale() === 'id' ? 'Jika Kosong' : 'If Clear' }}</span>
+    </button>
+</template>
+<template x-if="allowConditionals">
+    <button @click="addBlock('if_wall')" :disabled="running || won"
+            class="btn-kid bg-white border-2 border-kid-coral text-kid-coral gap-2">
+        <x-lucide-x-circle class="w-5 h-5" stroke-width="2.5" />
+        <span>{{ app()->getLocale() === 'id' ? 'Jika Dinding' : 'If Wall' }}</span>
+    </button>
+</template>
                 </div>
             </div>
 
@@ -133,19 +149,97 @@
 
                     <template x-for="(block, i) in program" :key="i">
                         <div>
-                            <template x-if="block.type !== 'loop'">
-                                <button @click.stop="removeBlock(i)" :disabled="running"
-                                        class="animate-slide-up px-4 py-3 rounded-kid font-extrabold text-white shadow-sm flex items-center justify-center"
-                                        :class="{
-                                            'bg-kid-blue': block.type === 'forward',
-                                            'bg-kid-purple': block.type === 'left',
-                                            'bg-kid-mint': block.type === 'right',
-                                        }">
-                                    <span x-show="block.type === 'forward'"><x-lucide-arrow-right class="w-5 h-5" stroke-width="2.5" /></span>
-                                    <span x-show="block.type === 'left'"><x-lucide-rotate-ccw class="w-5 h-5" stroke-width="2.5" /></span>
-                                    <span x-show="block.type === 'right'"><x-lucide-rotate-cw class="w-5 h-5" stroke-width="2.5" /></span>
-                                </button>
-                            </template>
+                           <template x-if="['forward', 'left', 'right'].includes(block.type)">
+    <button @click.stop="removeBlock(i)" :disabled="running"
+            class="animate-slide-up px-4 py-3 rounded-kid font-extrabold text-white shadow-sm flex items-center justify-center"
+            :class="{
+                'bg-kid-blue': block.type === 'forward',
+                'bg-kid-purple': block.type === 'left',
+                'bg-kid-mint': block.type === 'right',
+            }">
+        <span x-show="block.type === 'forward'"><x-lucide-arrow-right class="w-5 h-5" stroke-width="2.5" /></span>
+        <span x-show="block.type === 'left'"><x-lucide-rotate-ccw class="w-5 h-5" stroke-width="2.5" /></span>
+        <span x-show="block.type === 'right'"><x-lucide-rotate-cw class="w-5 h-5" stroke-width="2.5" /></span>
+    </button>
+</template>
+
+                            <template x-if="block.type === 'if_empty'">
+    <div @click.stop="focusLoop(i)"
+         class="animate-slide-up border-4 rounded-kid p-3 bg-kid-mint/10 transition cursor-pointer"
+         :class="focusedContainer === String(i)
+            ? 'border-kid-mint ring-4 ring-kid-mint/30'
+            : 'border-kid-mint/50'">
+
+        <div class="flex items-center gap-2 mb-2">
+            <x-lucide-check-circle class="w-4 h-4 text-kid-mint" stroke-width="2.5" />
+            <span class="font-extrabold text-sm text-kid-text">
+                {{ app()->getLocale() === 'id' ? 'Jika Kosong →' : 'If Clear →' }}
+            </span>
+            <button @click.stop="removeBlock(i)" :disabled="running"
+                    class="ml-auto text-kid-coral font-bold flex items-center justify-center">
+                <x-lucide-x class="w-4 h-4" stroke-width="3" />
+            </button>
+        </div>
+
+        <div class="flex flex-wrap gap-2 min-h-[44px]">
+            <template x-for="(inner, j) in block.body" :key="j">
+                <button @click.stop="removeLoopBlock(i, j)" :disabled="running"
+                        class="px-3 py-2 rounded-kid text-sm font-extrabold text-white shadow-sm flex items-center justify-center"
+                        :class="{
+                            'bg-kid-blue': inner.type === 'forward',
+                            'bg-kid-purple': inner.type === 'left',
+                            'bg-kid-mint': inner.type === 'right',
+                        }">
+                    <span x-show="inner.type === 'forward'"><x-lucide-arrow-right class="w-4 h-4" stroke-width="2.5" /></span>
+                    <span x-show="inner.type === 'left'"><x-lucide-rotate-ccw class="w-4 h-4" stroke-width="2.5" /></span>
+                    <span x-show="inner.type === 'right'"><x-lucide-rotate-cw class="w-4 h-4" stroke-width="2.5" /></span>
+                </button>
+            </template>
+            <p x-show="block.body.length === 0" class="text-xs text-gray-400 italic">
+                {{ app()->getLocale() === 'id' ? 'Lakukan ini jika jalan kosong' : 'Do this if path is clear' }}
+            </p>
+        </div>
+    </div>
+</template>
+
+<template x-if="block.type === 'if_wall'">
+    <div @click.stop="focusLoop(i)"
+         class="animate-slide-up border-4 rounded-kid p-3 bg-kid-coral/10 transition cursor-pointer"
+         :class="focusedContainer === String(i)
+            ? 'border-kid-coral ring-4 ring-kid-coral/30'
+            : 'border-kid-coral/50'">
+
+        <div class="flex items-center gap-2 mb-2">
+            <x-lucide-x-circle class="w-4 h-4 text-kid-coral" stroke-width="2.5" />
+            <span class="font-extrabold text-sm text-kid-text">
+                {{ app()->getLocale() === 'id' ? 'Jika Dinding →' : 'If Wall →' }}
+            </span>
+            <button @click.stop="removeBlock(i)" :disabled="running"
+                    class="ml-auto text-kid-coral font-bold flex items-center justify-center">
+                <x-lucide-x class="w-4 h-4" stroke-width="3" />
+            </button>
+        </div>
+
+        <div class="flex flex-wrap gap-2 min-h-[44px]">
+            <template x-for="(inner, j) in block.body" :key="j">
+                <button @click.stop="removeLoopBlock(i, j)" :disabled="running"
+                        class="px-3 py-2 rounded-kid text-sm font-extrabold text-white shadow-sm flex items-center justify-center"
+                        :class="{
+                            'bg-kid-blue': inner.type === 'forward',
+                            'bg-kid-purple': inner.type === 'left',
+                            'bg-kid-mint': inner.type === 'right',
+                        }">
+                    <span x-show="inner.type === 'forward'"><x-lucide-arrow-right class="w-4 h-4" stroke-width="2.5" /></span>
+                    <span x-show="inner.type === 'left'"><x-lucide-rotate-ccw class="w-4 h-4" stroke-width="2.5" /></span>
+                    <span x-show="inner.type === 'right'"><x-lucide-rotate-cw class="w-4 h-4" stroke-width="2.5" /></span>
+                </button>
+            </template>
+            <p x-show="block.body.length === 0" class="text-xs text-gray-400 italic">
+                {{ app()->getLocale() === 'id' ? 'Lakukan ini jika ada dinding' : 'Do this if there is a wall' }}
+            </p>
+        </div>
+    </div>
+</template>
 
                             <template x-if="block.type === 'loop'">
                                 <div @click.stop="focusLoop(i)"

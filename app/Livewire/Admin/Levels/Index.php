@@ -122,14 +122,15 @@ class Index extends Component
             ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         }
 
-        return json_encode([
-            'width' => 5, 'height' => 3,
-            'start' => ['x' => 0, 'y' => 1, 'dir' => 'right'],
-            'goal'  => ['x' => 4, 'y' => 1],
-            'walls' => [],
-            'max_blocks' => 8,
-            'allow_loops' => false,
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+      return json_encode([
+    'width' => 6, 'height' => 6,
+    'start' => ['x' => 0, 'y' => 0, 'dir' => 'right'],
+    'goal'  => ['x' => 5, 'y' => 5],
+    'walls' => [[2,0],[2,1],[2,2],[3,3],[4,3]],
+    'max_blocks' => 20,
+    'allow_loops' => true,
+    'allow_conditionals' => true, // NEW
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     public function save(): void
