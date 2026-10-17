@@ -32,11 +32,12 @@ class Login extends Component
             return;
         }
 
-        $user = Auth::user();
+               $user = Auth::user();
 
         return redirect()->intended(
             $user->isAdmin() ? route('admin.dashboard') :
-            ($user->isParent() ? route('parent.dashboard') : route('student.dashboard'))
+            ($user->isParent() ? route('parent.dashboard') : 
+            ($user->isTeacher() ? route('teacher.dashboard') : route('student.dashboard')))
         );
     }
 

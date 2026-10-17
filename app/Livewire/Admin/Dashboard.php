@@ -20,6 +20,14 @@ class Dashboard extends Component
     public string $tier = 'rookie';
     public string $newPassword = '';
 
+        // Create
+    public bool $showCreateModal = false;
+    public string $newName = '';
+    public string $newEmail = '';
+    public string $newRole = 'teacher'; // Default to teacher since that's what we're adding
+    public string $newTier = 'rookie';
+    public string $newAvatar = 'robot-purple';
+
     // View
     public bool $showViewModal = false;
     public ?int $viewingId = null;
@@ -41,6 +49,47 @@ class Dashboard extends Component
     }
 
     // ----- Edit -----
+
+    // ----- Create -----
+
+    public function openCreate(): void
+    {
+        $this->reset(['newName', 'newEmail', 'newPassword', 'newRole', 'newTier', 'newAvatar']);
+        $this->newRole = 'teacher'; 
+        $this->showCreateModal = true;
+    }
+
+    public function closeCreate(): void
+    {
+        $this->showCreateModal = false;
+        $this->resetErrorBag();
+    }
+
+    public function saveCreate(): void
+    {
+        $this->validate([
+            'newName'     => 'required|string|min:2|max:60',
+            'newEmail'    => 'required|email|unique:users,email',
+            'newPassword' => 'required|string|min:8',
+            'newRole'     => 'required|in:admin,parent,student,teacher',
+            'newTier'     => 'required|in:rookie,explorer,pro,hacker',
+            'newAvatar'   => 'required|in:robot-blue,robot-green,robot-yellow,robot-coral,robot-purple,robot-mint',
+        ]);
+
+        User::create([
+            'name'     => $this->newName,
+            'email'    => $this->newEmail,
+            'password' => Hash::make($this->newPassword),
+            'role'     => $this->newRole,
+            'tier'     => $this->newRole === 'student' ? $this->newTier : 'rookie',
+            'avatar'   => $this->newAvatar,
+            'language' => 'id',
+            'sound_enabled' => true,
+        ]);
+
+        session()->flash('success', 'User created successfully.');
+        $this->closeCreate();
+    }
 
     public function openEdit(int $id): void
     {

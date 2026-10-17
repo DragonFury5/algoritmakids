@@ -16,6 +16,14 @@
         <x-lucide-layers class="w-5 h-5" stroke-width="2.5" />
         <span>{{ app()->getLocale() === 'id' ? 'Kelola Modul' : 'Manage Modules' }}</span>
     </a>
+            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+            <a href="{{ route('admin.modules') }}" class="...">...</a>
+            <a href="{{ route('admin.levels') }}" class="...">...</a>
+            <button wire:click="openCreate" class="btn-kid bg-kid-blue text-white gap-2 flex-1 md:flex-none justify-center">
+                <x-lucide-user-plus class="w-5 h-5" stroke-width="2.5" />
+                <span>{{ app()->getLocale() === 'id' ? 'Tambah Pengguna' : 'Add User' }}</span>
+            </button>
+        </div>
     <a href="{{ route('admin.levels') }}"
        class="btn-kid bg-white border-2 border-gray-200 text-kid-text gap-2 flex-1 md:flex-none justify-center">
         <x-lucide-gamepad-2 class="w-5 h-5" stroke-width="2.5" />
@@ -192,7 +200,7 @@
                         <label class="block font-semibold mb-1 text-sm">
                             {{ app()->getLocale() === 'id' ? 'Peran' : 'Role' }}
                         </label>
-                       <div class="grid grid-cols-2 gap-2">
+                   <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
     @foreach(['admin', 'parent', 'student', 'teacher'] as $r)
         <button type="button" wire:click="$set('role', '{{ $r }}')"
                 class="p-2 rounded-kid border-2 text-xs font-bold capitalize transition
@@ -503,4 +511,106 @@
             </div>
         @endif
     @endif
+
+    {{-- ==================== CREATE USER MODAL ==================== --}}
+    @if($showCreateModal)
+        <div class="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
+             wire:click.self="closeCreate">
+            <div class="animate-pop-in bg-white rounded-t-kid md:rounded-kid shadow-2xl w-full md:max-w-lg
+                        max-h-[92vh] md:max-h-[90vh] flex flex-col">
+
+                <div class="flex justify-between items-center p-4 md:p-6 border-b border-gray-100 shrink-0">
+                    <h2 class="text-lg md:text-xl font-extrabold">
+                        {{ app()->getLocale() === 'id' ? 'Tambah Pengguna Baru' : 'Add New User' }}
+                    </h2>
+                    <button wire:click="closeCreate" class="text-gray-400 hover:text-gray-700 p-1">
+                        <x-lucide-x class="w-5 h-5" stroke-width="2.5" />
+                    </button>
+                </div>
+
+                <form wire:submit="saveCreate" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+
+                    <div>
+                        <label class="block font-semibold mb-1 text-sm">Name</label>
+                        <input type="text" wire:model="newName" class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue text-sm py-2">
+                        @error('newName') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold mb-1 text-sm">Email</label>
+                        <input type="email" wire:model="newEmail" class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue text-sm py-2">
+                        @error('newEmail') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold mb-1 text-sm">Password</label>
+                        <input type="text" wire:model="newPassword" placeholder="min. 8" class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue text-sm py-2 font-mono">
+                        @error('newPassword') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold mb-2 text-sm">Role</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                            @foreach(['admin', 'parent', 'student', 'teacher'] as $r)
+                                <button type="button" wire:click="$set('newRole', '{{ $r }}')"
+                                        class="p-2 rounded-kid border-2 text-xs font-bold capitalize transition
+                                               {{ $newRole === $r ? 'border-kid-blue bg-kid-blue/5 text-kid-blue' : 'border-gray-200 text-gray-500' }}">
+                                    {{ $r }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    @if($newRole === 'student')
+                        <div>
+                            <label class="block font-semibold mb-2 text-sm">Tier</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                @foreach(config('tiers') as $key => $t)
+                                    <button type="button" wire:click="$set('newTier', '{{ $key }}')"
+                                            class="p-2 rounded-kid border-2 text-left transition
+                                                   {{ $newTier === $key ? 'border-kid-blue bg-kid-blue/5' : 'border-gray-200' }}">
+                                        <div class="font-bold text-xs truncate">{{ $t['label_' . app()->getLocale()] }}</div>
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <div>
+                        <label class="block font-semibold mb-2 text-sm">Avatar</label>
+                        <div class="flex flex-wrap gap-2">
+                            @php
+                                $colors = [
+                                    'robot-blue'   => '#7EC8E3', 'robot-green'  => '#A8E6CF',
+                                    'robot-yellow' => '#FFD97D', 'robot-coral'  => '#FF8B94',
+                                    'robot-purple' => '#B39DDB', 'robot-mint'   => '#B8E0D2',
+                                ];
+                            @endphp
+                            @foreach($colors as $key => $color)
+                                <button type="button" wire:click="$set('newAvatar', '{{ $key }}')"
+                                        class="w-10 h-10 rounded-full border-2 md:border-4 transition
+                                               {{ $newAvatar === $key ? 'border-kid-blue scale-110' : 'border-transparent' }}"
+                                        style="background-color: {{ $color }}">
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                </form>
+
+                <div class="p-4 md:p-6 border-t border-gray-100 flex gap-3 shrink-0">
+                    <button type="button" wire:click="closeCreate"
+                            class="flex-1 rounded-kid px-4 py-2.5 font-bold bg-gray-100 text-gray-700 text-sm">
+                        Batal
+                    </button>
+                    <button type="button" wire:click="saveCreate"
+                            class="flex-1 rounded-kid px-4 py-2.5 font-bold bg-kid-blue text-white text-sm">
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+
 </div>
