@@ -47,6 +47,7 @@ document.addEventListener('alpine:init', () => {
         maxBlocks: config.max_blocks || 20,
         allowLoops: config.allow_loops || false,
         allowConditionals: config.allow_conditionals || false,
+        allowWhileLoops: config.allow_while_loops || false,
         levelId: config.level_id,
 
         robot: { x: config.start.x, y: config.start.y, dir: config.start.dir },
@@ -128,23 +129,23 @@ document.addEventListener('alpine:init', () => {
             if (this.focusedContainer === 'main') return this.program;
             const idx = parseInt(this.focusedContainer);
             const block = this.program[idx];
-            if (block && ['loop', 'if_empty', 'if_wall'].includes(block.type)) {
+            if (block && ['loop', 'while_empty', 'while_wall'].includes(block.type)) {
                 return block.body;
+    
             }
+            
             return this.program;
         },
 
         addBlock(type) {
             if (this.running || this.won) return;
 
-            // Logic for loop/if blocks (containers)
-            if (['loop', 'if_empty', 'if_wall'].includes(type)) {
-                if (this.focusedContainer !== 'main') {
-                    // Cannot nest containers inside containers for now
-                    return;
-                }
+                       // Logic for loop/if blocks (containers)
+            if (['loop', 'while_empty', 'while_wall'].includes(type)) {
+                if (this.focusedContainer !== 'main') return;
+                
                 if (type === 'loop' && !this.allowLoops) return;
-                if (type !== 'loop' && !this.allowConditionals) return;
+                if (type !== 'loop' && !this.allowWhileLoops) return;
                 
                 if (this.program.length >= this.maxBlocks) return;
                 
@@ -216,7 +217,7 @@ document.addEventListener('alpine:init', () => {
             let n = 0;
             for (const b of program) {
                 n++;
-                if (['loop', 'if_empty', 'if_wall'].includes(b.type) && Array.isArray(b.body)) {
+                               if (['loop', 'while_empty', 'while_wall'].includes(b.type) && Array.isArray(b.body)) {
                     n += this.countWrittenBlocks(b.body);
                 }
             }
@@ -269,15 +270,21 @@ document.addEventListener('alpine:init', () => {
                         if (won) return true;
                         if (this.showFailModal) return false;
                     }
-                } else if (block.type === 'if_empty') {
-                    if (this.isPathClear()) {
+                       } else if (block.type === 'while_empty') {
+                    let safety = 0;
+                    while (this.isPathClear() && safety < 50) {
                         const won = await this.runBlocks(block.body, depth + 1);
                         if (won) return true;
+                        if (this.showFailModal) return false;
+                        safety++;
                     }
-                } else if (block.type === 'if_wall') {
-                    if (!this.isPathClear()) {
+                } else if (block.type === 'while_wall') {
+                    let safety = 0;
+                    while (!this.isPathClear() && safety < 50) {
                         const won = await this.runBlocks(block.body, depth + 1);
                         if (won) return true;
+                        if (this.showFailModal) return false;
+                        safety++;
                     }
                 } else {
                     const ok = await this.execute(block);

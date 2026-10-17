@@ -8,7 +8,7 @@
         walls: {{ Js::from($level->game_data['walls']) }},
         max_blocks: {{ $level->game_data['max_blocks'] ?? 20 }},
         allow_loops: {{ !empty($level->game_data['allow_loops']) ? 'true' : 'false' }},
-        allow_conditionals: {{ !empty($level->game_data['allow_conditionals']) ? 'true' : 'false' }},
+        allow_while_loops: {{ !empty($level->game_data['allow_while_loops']) ? 'true' : 'false' }},
         level_id: {{ $level->id }}
 
      })">
@@ -115,18 +115,18 @@
         <span>{{ app()->getLocale() === 'id' ? 'Ulangi' : 'Repeat' }}</span>
     </button>
 </template>
-<template x-if="allowConditionals">
-    <button @click="addBlock('if_empty')" :disabled="running || won"
+<template x-if="allowWhileLoops">
+    <button @click="addBlock('while_empty')" :disabled="running || won"
             class="btn-kid bg-white border-2 border-kid-mint text-kid-mint gap-2">
         <x-lucide-check-circle class="w-5 h-5" stroke-width="2.5" />
-        <span>{{ app()->getLocale() === 'id' ? 'Jika Kosong' : 'If Clear' }}</span>
+        <span>{{ app()->getLocale() === 'id' ? 'Selama Kosong' : 'While Clear' }}</span>
     </button>
 </template>
-<template x-if="allowConditionals">
-    <button @click="addBlock('if_wall')" :disabled="running || won"
+<template x-if="allowWhileLoops">
+    <button @click="addBlock('while_wall')" :disabled="running || won"
             class="btn-kid bg-white border-2 border-kid-coral text-kid-coral gap-2">
         <x-lucide-x-circle class="w-5 h-5" stroke-width="2.5" />
-        <span>{{ app()->getLocale() === 'id' ? 'Jika Dinding' : 'If Wall' }}</span>
+        <span>{{ app()->getLocale() === 'id' ? 'Selama Dinding' : 'While Wall' }}</span>
     </button>
 </template>
                 </div>
@@ -163,7 +163,7 @@
     </button>
 </template>
 
-                            <template x-if="block.type === 'if_empty'">
+                            <template x-if="block.type === 'while_empty'">
     <div @click.stop="focusLoop(i)"
          class="animate-slide-up border-4 rounded-kid p-3 bg-kid-mint/10 transition cursor-pointer"
          :class="focusedContainer === String(i)
@@ -173,7 +173,7 @@
         <div class="flex items-center gap-2 mb-2">
             <x-lucide-check-circle class="w-4 h-4 text-kid-mint" stroke-width="2.5" />
             <span class="font-extrabold text-sm text-kid-text">
-                {{ app()->getLocale() === 'id' ? 'Jika Kosong →' : 'If Clear →' }}
+                {{ app()->getLocale() === 'id' ? 'Selama Kosong  →' : 'while Clear →' }}
             </span>
             <button @click.stop="removeBlock(i)" :disabled="running"
                     class="ml-auto text-kid-coral font-bold flex items-center justify-center">
@@ -202,7 +202,7 @@
     </div>
 </template>
 
-<template x-if="block.type === 'if_wall'">
+<template x-if="block.type === 'while_wall'">
     <div @click.stop="focusLoop(i)"
          class="animate-slide-up border-4 rounded-kid p-3 bg-kid-coral/10 transition cursor-pointer"
          :class="focusedContainer === String(i)
@@ -212,7 +212,7 @@
         <div class="flex items-center gap-2 mb-2">
             <x-lucide-x-circle class="w-4 h-4 text-kid-coral" stroke-width="2.5" />
             <span class="font-extrabold text-sm text-kid-text">
-                {{ app()->getLocale() === 'id' ? 'Jika Dinding →' : 'If Wall →' }}
+                {{ app()->getLocale() === 'id' ? 'Selama Dinding  →' : 'While Wall →' }}
             </span>
             <button @click.stop="removeBlock(i)" :disabled="running"
                     class="ml-auto text-kid-coral font-bold flex items-center justify-center">

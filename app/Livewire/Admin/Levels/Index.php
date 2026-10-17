@@ -129,7 +129,7 @@ class Index extends Component
     'walls' => [[2,0],[2,1],[2,2],[3,3],[4,3]],
     'max_blocks' => 20,
     'allow_loops' => true,
-    'allow_conditionals' => true, // NEW
+    'allow_while_loops' => true, // Renamed from allow_conditionals
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
