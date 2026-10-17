@@ -1,52 +1,4 @@
 <div>
-
-{{-- ==================== BADGE CELEBRATION ==================== --}}
-@if($showBadgeCelebration && $unseenBadges->isNotEmpty())
-    @php $firstBadge = $unseenBadges->first(); @endphp
-    <div class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" x-init="window.sound.badge()">
-        <div class="animate-pop-in bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full relative overflow-hidden">
-
-            {{-- Glow --}}
-            <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-kid-yellow/30 blur-3xl animate-pulse-soft"></div>
-            <div class="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-kid-coral/20 blur-3xl animate-pulse-soft" style="animation-delay: -1.5s;"></div>
-
-            <div class="relative">
-                {{-- Big badge --}}
-                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-kid-yellow to-kid-coral flex items-center justify-center mx-auto mb-4 shadow-lg animate-float">
-                    <x-dynamic-component :component="'lucide-' . $firstBadge->icon"
-                                         class="w-12 h-12 text-white" stroke-width="2" />
-                </div>
-
-                <div class="text-xs uppercase tracking-widest font-extrabold text-kid-coral mb-2">
-                    {{ app()->getLocale() === 'id' ? 'Lencana Baru!' : 'New Badge!' }}
-                </div>
-
-                <h2 class="text-2xl md:text-3xl font-extrabold mb-2">
-                    {{ $firstBadge->name }}
-                </h2>
-
-                <p class="text-gray-500 mb-6 text-sm">
-                    {{ app()->getLocale() === 'id'
-                        ? 'Kamu menyelesaikan semua level di modul ini. Hebat!'
-                        : 'You finished every level in this module. Amazing!' }}
-                </p>
-
-                @if($unseenBadges->count() > 1)
-                    <p class="text-xs text-gray-400 mb-4">
-                        +{{ $unseenBadges->count() - 1 }}
-                        {{ app()->getLocale() === 'id' ? 'lencana lainnya' : 'more badge(s)' }}
-                    </p>
-                @endif
-
-                <button wire:click="markBadgesSeen"
-                        class="btn-kid bg-kid-blue text-white w-full text-lg">
-                    <x-lucide-sparkles class="w-5 h-5 mr-2" stroke-width="2.5" />
-                    <span>{{ app()->getLocale() === 'id' ? 'Keren!' : 'Awesome!' }}</span>
-                </button>
-            </div>
-        </div>
-    </div>
-@endif
     {{-- ==================== HEADER ==================== --}}
     <div class="animate-pop-in bg-white rounded-kid border border-gray-200 p-5 md:p-6 mb-8">
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -111,10 +63,10 @@
         </div>
     </div>
 
-    {{-- ==================== MODULE PATH ==================== --}}
+    {{-- ==================== MODULE GRID ==================== --}}
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-extrabold">
-            {{ app()->getLocale() === 'id' ? 'Jalur Belajar' : 'Learning Path' }}
+            {{ app()->getLocale() === 'id' ? 'Modul Belajar' : 'Learning Modules' }}
         </h2>
         @if(! $modules->isEmpty())
             <span class="text-xs text-gray-400 font-semibold">
@@ -131,8 +83,8 @@
             </p>
         </div>
     @else
-        <div class="space-y-3">
-            @foreach($modules as $i => $module)
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($modules as $module)
                 @php
                     $colorBg   = 'bg-' . $module->style_color;
                     $colorText = 'text-' . $module->style_color;
@@ -140,78 +92,51 @@
                     $prog = $module->progress;
                 @endphp
 
-                <div class="bg-white rounded-kid border border-gray-200 p-4 md:p-5 card-lift">
-                    <div class="flex items-center gap-3 md:gap-4">
-
-                        {{-- Module icon --}}
-                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-kid {{ $colorBg }} flex items-center justify-center shrink-0">
+                <div class="bg-white rounded-kid border border-gray-200 p-5 flex flex-col card-lift">
+                    
+                    {{-- Icon & Status --}}
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 rounded-kid {{ $colorBg }} flex items-center justify-center shrink-0">
                             <x-dynamic-component :component="'lucide-' . $module->style_icon"
-                                                 class="w-6 h-6 md:w-7 md:h-7 text-white" stroke-width="2.5" />
+                                                 class="w-6 h-6 text-white" stroke-width="2.5" />
                         </div>
-
-                        {{-- Info + progress --}}
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-[10px] uppercase tracking-wider font-extrabold text-gray-400">
-                                    {{ app()->getLocale() === 'id' ? 'Modul' : 'Module' }} {{ $i + 1 }}
-                                </span>
-                                @if($prog['finished'])
-                                    <span class="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold text-kid-mint">
-                                        <x-lucide-check-circle class="w-3 h-3" stroke-width="3" />
-                                        {{ app()->getLocale() === 'id' ? 'Selesai' : 'Done' }}
-                                    </span>
-                                @elseif($prog['started'])
-                                    <span class="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold text-kid-yellow">
-                                        <x-lucide-circle-dot class="w-3 h-3" stroke-width="3" />
-                                        {{ app()->getLocale() === 'id' ? 'Berjalan' : 'In Progress' }}
-                                    </span>
-                                @endif
-                            </div>
-
-                            <h3 class="text-base md:text-lg font-extrabold truncate">{{ $module->title }}</h3>
-                            <p class="text-xs md:text-sm text-gray-500 truncate">{{ $module->description }}</p>
-
-                            {{-- Progress bar --}}
-                            <div class="flex items-center gap-3 mt-2">
-                                <div class="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                                    <div class="h-full {{ $colorBg }} transition-all duration-500"
-                                         style="width: {{ $prog['percent'] }}%"></div>
-                                </div>
-                                <span class="text-xs font-bold text-gray-500 shrink-0 tabular-nums">
-                                    {{ $prog['earned'] }}/{{ $prog['total'] }}
-                                    <x-lucide-star class="inline w-3 h-3 -mt-0.5 text-kid-yellow fill-current" stroke-width="1.5" />
-                                </span>
-                            </div>
-                        </div>
-
-                        {{-- Action --}}
-                        @if($firstLevel)
-                            @if($prog['finished'])
-                                <a href="{{ $firstLevel->playRoute() }}"
-                                   class="shrink-0 hidden md:flex items-center gap-2 rounded-kid px-4 py-2 text-sm font-bold bg-white border-2 border-gray-200 text-kid-text hover:border-gray-300">
-                                    <x-lucide-rotate-ccw class="w-4 h-4" stroke-width="2.5" />
-                                    <span>{{ app()->getLocale() === 'id' ? 'Ulangi' : 'Review' }}</span>
-                                </a>
-                            @elseif($prog['started'])
-                                <a href="{{ $firstLevel->playRoute() }}"
-                                   class="shrink-0 hidden md:flex items-center gap-2 rounded-kid px-4 py-2 text-sm font-bold bg-kid-blue text-white">
-                                    <x-lucide-play class="w-4 h-4 fill-current" stroke-width="2" />
-                                    <span>{{ app()->getLocale() === 'id' ? 'Lanjut' : 'Continue' }}</span>
-                                </a>
-                            @else
-                                <a href="{{ $firstLevel->playRoute() }}"
-                                   class="shrink-0 hidden md:flex items-center gap-2 rounded-kid px-4 py-2 text-sm font-bold bg-kid-blue text-white">
-                                    <span>{{ app()->getLocale() === 'id' ? 'Mulai' : 'Start' }}</span>
-                                    <x-lucide-arrow-right class="w-4 h-4" stroke-width="2.5" />
-                                </a>
-                            @endif
+                        
+                        @if($prog['finished'])
+                            <span class="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold text-kid-mint mt-1">
+                                <x-lucide-check-circle class="w-3 h-3" stroke-width="3" />
+                                {{ app()->getLocale() === 'id' ? 'Selesai' : 'Done' }}
+                            </span>
+                        @elseif($prog['started'])
+                            <span class="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold text-kid-yellow mt-1">
+                                <x-lucide-circle-dot class="w-3 h-3" stroke-width="3" />
+                                {{ app()->getLocale() === 'id' ? 'Berjalan' : 'In Progress' }}
+                            </span>
                         @endif
                     </div>
 
-                    {{-- Mobile action --}}
+                    {{-- Title & Desc --}}
+                    <h3 class="text-xl font-extrabold mb-2 leading-tight">{{ $module->title }}</h3>
+                    <p class="text-sm text-gray-500 mb-6 flex-1">{{ $module->description }}</p>
+
+                    {{-- Progress Bar --}}
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between text-xs font-bold text-gray-500 mb-1.5">
+                            <span>{{ $prog['completed_levels'] }}/{{ $prog['total_levels'] }} {{ app()->getLocale() === 'id' ? 'level' : 'levels' }}</span>
+                            <span class="flex items-center gap-1">
+                                {{ $prog['earned'] }}/{{ $prog['total'] }}
+                                <x-lucide-star class="w-3 h-3 text-kid-yellow fill-current" stroke-width="1.5" />
+                            </span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                            <div class="h-full {{ $colorBg }} transition-all duration-500"
+                                 style="width: {{ $prog['percent'] }}%"></div>
+                        </div>
+                    </div>
+
+                    {{-- Button --}}
                     @if($firstLevel)
                         <a href="{{ $firstLevel->playRoute() }}"
-                           class="md:hidden mt-3 flex items-center justify-center gap-2 rounded-kid px-4 py-2.5 text-sm font-bold
+                           class="btn-kid w-full justify-center gap-2
                                   {{ $prog['finished']
                                      ? 'bg-white border-2 border-gray-200 text-kid-text'
                                      : 'bg-kid-blue text-white' }}">
@@ -233,31 +158,80 @@
     @endif
 
     {{-- ==================== BADGES ==================== --}}
-@if($earnedBadges->isNotEmpty())
-    <div class="mt-8">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-extrabold">
-                {{ app()->getLocale() === 'id' ? 'Lencana' : 'Badges' }}
-            </h2>
-            <span class="text-xs text-gray-400 font-semibold">
-                {{ $earnedBadges->count() }}
-            </span>
-        </div>
+    @if($earnedBadges->isNotEmpty())
+        <div class="mt-12">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-extrabold">
+                    {{ app()->getLocale() === 'id' ? 'Lencana' : 'Badges' }}
+                </h2>
+                <span class="text-xs text-gray-400 font-semibold">
+                    {{ $earnedBadges->count() }}
+                </span>
+            </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            @foreach($earnedBadges as $badge)
-                <div class="bg-white rounded-kid border border-gray-200 p-4 text-center card-lift">
-                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-kid-yellow to-kid-coral flex items-center justify-center mx-auto mb-3">
-                        <x-dynamic-component :component="'lucide-' . $badge->icon"
-                                             class="w-7 h-7 text-white" stroke-width="2.5" />
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                @foreach($earnedBadges as $badge)
+                    <div class="bg-white rounded-kid border border-gray-200 p-4 text-center card-lift">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-kid-yellow to-kid-coral flex items-center justify-center mx-auto mb-3">
+                            <x-dynamic-component :component="'lucide-' . $badge->icon"
+                                                 class="w-7 h-7 text-white" stroke-width="2.5" />
+                        </div>
+                        <div class="font-extrabold text-sm leading-tight">{{ $badge->name }}</div>
+                        <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mt-1">
+                            {{ \Carbon\Carbon::parse($badge->pivot->earned_at)->format('d M Y') }}
+                        </div>
                     </div>
-                    <div class="font-extrabold text-sm leading-tight">{{ $badge->name }}</div>
-                    <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold mt-1">
-                       {{ \Carbon\Carbon::parse($badge->pivot->earned_at)->format('d M Y') }}
-                    </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
-    </div>
-@endif
+    @endif
+
+    {{-- ==================== BADGE CELEBRATION ==================== --}}
+    @if($showBadgeCelebration && $unseenBadges->isNotEmpty())
+        @php $firstBadge = $unseenBadges->first(); @endphp
+        <div class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4"
+             x-init="window.sound.badge()">
+            <div class="animate-pop-in bg-white rounded-kid shadow-2xl p-8 text-center max-w-md w-full relative overflow-hidden">
+
+                {{-- Glow --}}
+                <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-kid-yellow/30 blur-3xl animate-pulse-soft"></div>
+                <div class="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-kid-coral/20 blur-3xl animate-pulse-soft" style="animation-delay: -1.5s;"></div>
+
+                <div class="relative">
+                    {{-- Big badge --}}
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-kid-yellow to-kid-coral flex items-center justify-center mx-auto mb-4 shadow-lg animate-float">
+                        <x-dynamic-component :component="'lucide-' . $firstBadge->icon"
+                                             class="w-12 h-12 text-white" stroke-width="2" />
+                    </div>
+
+                    <div class="text-xs uppercase tracking-widest font-extrabold text-kid-coral mb-2">
+                        {{ app()->getLocale() === 'id' ? 'Lencana Baru!' : 'New Badge!' }}
+                    </div>
+
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-2">
+                        {{ $firstBadge->name }}
+                    </h2>
+
+                    <p class="text-gray-500 mb-6 text-sm">
+                        {{ app()->getLocale() === 'id'
+                            ? 'Kamu menyelesaikan semua level di modul ini. Hebat!'
+                            : 'You finished every level in this module. Amazing!' }}
+                    </p>
+
+                    @if($unseenBadges->count() > 1)
+                        <p class="text-xs text-gray-400 mb-4">
+                            +{{ $unseenBadges->count() - 1 }}
+                            {{ app()->getLocale() === 'id' ? 'lencana lainnya' : 'more badge(s)' }}
+                        </p>
+                    @endif
+
+                    <button wire:click="markBadgesSeen"
+                            class="btn-kid bg-kid-blue text-white w-full text-lg">
+                        <x-lucide-sparkles class="w-5 h-5 mr-2" stroke-width="2.5" />
+                        <span>{{ app()->getLocale() === 'id' ? 'Keren!' : 'Awesome!' }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
