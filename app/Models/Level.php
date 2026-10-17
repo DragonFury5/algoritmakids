@@ -59,4 +59,27 @@ public function scopeForTier($query, string $tier)
 {
     return $query->where('tier', $tier);
 }
+
+public function isUnlockedFor($user): bool
+{
+    if (! $user) return false;
+
+    // Find the immediately preceding level in the same module and tier
+    $previousLevel = self::where('module_id', $this->module_id)
+        ->where('tier', $this->tier)
+        ->where('order', '<', $this->order)
+        ->orderBy('order', 'desc')
+        ->first();
+
+    // If there is no previous level, it's the first one. Always unlocked.
+    if (! $previousLevel) {
+        return true;
+    }
+
+    // Check if the previous level is completed
+    return $user->progress()
+        ->where('level_id', $previousLevel->id)
+        ->whereNotNull('completed_at')
+        ->exists();
+}
 }

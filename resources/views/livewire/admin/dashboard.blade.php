@@ -192,15 +192,15 @@
                         <label class="block font-semibold mb-1 text-sm">
                             {{ app()->getLocale() === 'id' ? 'Peran' : 'Role' }}
                         </label>
-                        <div class="grid grid-cols-3 gap-2">
-                            @foreach(['admin', 'parent', 'student'] as $r)
-                                <button type="button" wire:click="$set('role', '{{ $r }}')"
-                                        class="p-2 rounded-kid border-2 text-xs font-bold capitalize transition
-                                               {{ $role === $r ? 'border-kid-blue bg-kid-blue/5 text-kid-blue' : 'border-gray-200 text-gray-500' }}">
-                                    {{ $r }}
-                                </button>
-                            @endforeach
-                        </div>
+                       <div class="grid grid-cols-2 gap-2">
+    @foreach(['admin', 'parent', 'student', 'teacher'] as $r)
+        <button type="button" wire:click="$set('role', '{{ $r }}')"
+                class="p-2 rounded-kid border-2 text-xs font-bold capitalize transition
+                       {{ $role === $r ? 'border-kid-blue bg-kid-blue/5 text-kid-blue' : 'border-gray-200 text-gray-500' }}">
+            {{ $r }}
+        </button>
+    @endforeach
+</div>
                         @error('role') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
                     </div>
 

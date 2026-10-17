@@ -13,6 +13,8 @@ use App\Livewire\Student\Dashboard as StudentDashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Parent\Child\Show as ParentChildShow;
+use App\Livewire\Teacher\Dashboard as TeacherDashboard;
+use App\Livewire\Teacher\ClassroomView as TeacherClassroomView;
 
 // ---------- Public ----------
 Route::get('/', function () {
@@ -61,8 +63,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
     // Student
-    Route::middleware('role:student')->group(function () {
+        Route::middleware('role:student')->group(function () {
         Route::get('/student', StudentDashboard::class)->name('student.dashboard');
+        Route::get('/student/module/{module}', \App\Livewire\Student\Module\Show::class)->name('student.module');
         Route::get('/play/robot/{level}', RobotPath::class)->name('play.robot');
         Route::get('/play/pattern/{level}', PatternFixer::class)->name('play.pattern');
     });
@@ -72,6 +75,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin', AdminDashboard::class)->name('admin.dashboard');
         Route::get('/admin/modules', ModulesIndex::class)->name('admin.modules');
         Route::get('/admin/levels', LevelsIndex::class)->name('admin.levels');
+    });
+
+    // ... inside the auth middleware group:
+    Route::middleware('role:teacher')->group(function () {
+        Route::get('/teacher', TeacherDashboard::class)->name('teacher.dashboard');
+        Route::get('/teacher/class/{classroom}', TeacherClassroomView::class)->name('teacher.classroom');
     });
 
 });

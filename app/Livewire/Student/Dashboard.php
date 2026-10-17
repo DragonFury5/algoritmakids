@@ -78,4 +78,28 @@ class Dashboard extends Component
             'unseenBadges'    => $unseenBadges,
         ]);
     }
+
+
+        public string $joinCode = '';
+
+    public function joinClass()
+    {
+        $this->validate(['joinCode' => 'required|string|size:6']);
+
+        $classroom = \App\Models\Classroom::where('code', strtoupper($this->joinCode))->first();
+
+        if (! $classroom) {
+            session()->flash('error_join', app()->getLocale() === 'id' ? 'Kode kelas tidak ditemukan.' : 'Class code not found.');
+            return;
+        }
+
+        if (auth()->user()->classroomsJoined()->where('classroom_id', $classroom->id)->exists()) {
+            session()->flash('error_join', app()->getLocale() === 'id' ? 'Kamu sudah tergabung.' : 'You are already enrolled.');
+            return;
+        }
+
+        auth()->user()->classroomsJoined()->attach($classroom->id);
+        $this->joinCode = '';
+        session()->flash('success', 'Berhasil bergabung dengan kelas!');
+    }
 }

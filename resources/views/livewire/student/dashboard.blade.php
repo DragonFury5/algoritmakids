@@ -63,6 +63,36 @@
         </div>
     </div>
 
+        {{-- ==================== JOIN CLASS WIDGET ==================== --}}
+    @if(auth()->user()->classroomsJoined()->count() === 0)
+        <div class="bg-kid-purple/10 border-2 border-kid-purple/30 rounded-kid p-5 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-kid-purple flex items-center justify-center shrink-0">
+                    <x-lucide-users class="w-6 h-6 text-white" stroke-width="2.5" />
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-kid-text">{{ app()->getLocale() === 'id' ? 'Punya kode kelas?' : 'Have a class code?' }}</h3>
+                    <p class="text-sm text-gray-500">{{ app()->getLocale() === 'id' ? 'Masukkan kode dari gurumu untuk bergabung.' : 'Enter the code from your teacher to join.' }}</p>
+                </div>
+            </div>
+            <form wire:submit="joinClass" class="flex gap-2 w-full md:w-auto">
+                <input type="text" wire:model="joinCode" placeholder="ABC123" maxlength="6" class="rounded-kid border-gray-300 font-mono text-center uppercase focus:ring-kid-purple focus:border-kid-purple w-32 py-2">
+                <button type="submit" class="btn-kid bg-kid-purple text-white">Gabung</button>
+            </form>
+        </div>
+        @if(session()->has('error_join'))
+            <div class="text-kid-coral text-sm font-bold mb-4">{{ session('error_join') }}</div>
+        @endif
+    @else
+        <div class="flex items-center gap-2 text-sm text-gray-500 mb-8 bg-white rounded-kid p-3 border border-gray-200">
+            <x-lucide-school class="w-4 h-4 text-kid-purple" stroke-width="2.5" />
+            <span>{{ app()->getLocale() === 'id' ? 'Kamu tergabung di kelas:' : 'You are enrolled in:' }}</span>
+            @foreach(auth()->user()->classroomsJoined as $c)
+                <span class="font-bold bg-kid-bg px-2 py-0.5 rounded">{{ $c->name }}</span>
+            @endforeach
+        </div>
+    @endif
+
     {{-- ==================== MODULE GRID ==================== --}}
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-extrabold">
@@ -133,25 +163,23 @@
                         </div>
                     </div>
 
-                    {{-- Button --}}
-                    @if($firstLevel)
-                        <a href="{{ $firstLevel->playRoute() }}"
-                           class="btn-kid w-full justify-center gap-2
-                                  {{ $prog['finished']
-                                     ? 'bg-white border-2 border-gray-200 text-kid-text'
-                                     : 'bg-kid-blue text-white' }}">
-                            @if($prog['finished'])
-                                <x-lucide-rotate-ccw class="w-4 h-4" stroke-width="2.5" />
-                                <span>{{ app()->getLocale() === 'id' ? 'Ulangi' : 'Review' }}</span>
-                            @elseif($prog['started'])
-                                <x-lucide-play class="w-4 h-4 fill-current" stroke-width="2" />
-                                <span>{{ app()->getLocale() === 'id' ? 'Lanjut' : 'Continue' }}</span>
-                            @else
-                                <span>{{ app()->getLocale() === 'id' ? 'Mulai' : 'Start' }}</span>
-                                <x-lucide-arrow-right class="w-4 h-4" stroke-width="2.5" />
-                            @endif
-                        </a>
-                    @endif
+                                       {{-- Button --}}
+                    <a href="{{ route('student.module', $module) }}"
+                       class="btn-kid w-full justify-center gap-2
+                              {{ $prog['finished']
+                                 ? 'bg-white border-2 border-gray-200 text-kid-text'
+                                 : 'bg-kid-blue text-white' }}">
+                        @if($prog['finished'])
+                            <x-lucide-check-circle class="w-4 h-4 text-kid-mint" stroke-width="2.5" />
+                            <span>{{ app()->getLocale() === 'id' ? 'Selesai' : 'Completed' }}</span>
+                        @elseif($prog['started'])
+                            <x-lucide-play class="w-4 h-4 fill-current" stroke-width="2" />
+                            <span>{{ app()->getLocale() === 'id' ? 'Lanjut' : 'Continue' }}</span>
+                        @else
+                            <span>{{ app()->getLocale() === 'id' ? 'Mulai' : 'Start' }}</span>
+                            <x-lucide-arrow-right class="w-4 h-4" stroke-width="2.5" />
+                        @endif
+                    </a>
                 </div>
             @endforeach
         </div>

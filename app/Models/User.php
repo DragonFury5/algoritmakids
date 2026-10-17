@@ -164,4 +164,22 @@ public function resume(): void
 {
     $this->update(['paused_at' => null]);
 }
+
+
+    // Teacher: classrooms they own
+    public function classroomsOwned(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Classroom::class, 'teacher_id');
+    }
+
+    // Student: classrooms they are enrolled in
+    public function classroomsJoined(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Classroom::class, 'classroom_student', 'user_id', 'classroom_id')->withTimestamps();
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->role === 'teacher';
+    }
 }

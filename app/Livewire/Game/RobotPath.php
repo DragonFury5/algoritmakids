@@ -20,6 +20,12 @@ class RobotPath extends Component
         }
 
         $this->level = $level;
+        
+                if (! $level->isUnlockedFor(auth()->user())) {
+            session()->flash('error', app()->getLocale() === 'id' ? 'Selesaikan level sebelumnya dulu!' : 'Complete the previous level first!');
+            $this->redirectRoute('student.module', ['module' => $level->module_id]);
+            return;
+        }
 
         $progress = Progress::where('user_id', auth()->id())
             ->where('level_id', $level->id)
