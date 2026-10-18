@@ -62,6 +62,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/parent/child/{child}', ParentChildShow::class)->name('parent.child.show');
 });
 
+          Route::post('/heartbeat', function () {
+        $user = auth()->user();
+        
+        if (! $user) {
+            return response()->json(['error' => 'No user logged in'], 401);
+        }
+
+        $user->increment('total_time_spent_seconds', 60);
+        
+        return response()->json(['status' => 'ok']);
+    })->name('heartbeat');
+    
     // Student
         Route::middleware('role:student')->group(function () {
         Route::get('/student', StudentDashboard::class)->name('student.dashboard');

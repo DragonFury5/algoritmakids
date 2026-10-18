@@ -60,10 +60,16 @@
                             <div class="text-xs text-gray-500 capitalize">{{ $student->tier }}</div>
                         </div>
 
-                        {{-- Stars --}}
-                        <div class="flex items-center gap-1 font-extrabold text-kid-yellow shrink-0">
-                            {{ $student->total_stars }}
-                            <x-lucide-star class="w-4 h-4 fill-current" stroke-width="1.5" />
+                                               {{-- Stats --}}
+                        <div class="flex items-center gap-4 shrink-0 text-sm font-bold">
+                            <div class="flex items-center gap-1 text-gray-500" title="Time Spent">
+                                <x-lucide-clock class="w-4 h-4" stroke-width="2.5" />
+                                {{ $student->formatted_time_spent }}
+                            </div>
+                            <div class="flex items-center gap-1 text-kid-yellow">
+                                {{ $student->total_stars }}
+                                <x-lucide-star class="w-4 h-4 fill-current" stroke-width="1.5" />
+                            </div>
                         </div>
                     </div>
                 @endforeach

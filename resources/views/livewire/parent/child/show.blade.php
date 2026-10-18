@@ -55,10 +55,14 @@
             </div>
 
             {{-- Stats --}}
-            <div class="grid grid-cols-4 md:flex gap-3 md:gap-4 md:shrink-0">
+            <div class="grid grid-cols-5 md:flex gap-3 md:gap-4 md:shrink-0">
                 <div class="text-center">
                     <div class="text-lg md:text-xl font-extrabold">{{ $stats['stars'] }}</div>
                     <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">{{ app()->getLocale() === 'id' ? 'Bintang' : 'Stars' }}</div>
+                </div>
+                                <div class="text-center">
+                    <div class="text-lg md:text-xl font-extrabold">{{ $child->formatted_time_spent }}</div>
+                    <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">{{ app()->getLocale() === 'id' ? 'Waktu' : 'Time' }}</div>
                 </div>
                 <div class="text-center">
                     <div class="text-lg md:text-xl font-extrabold">{{ $stats['finished'] }}</div>

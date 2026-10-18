@@ -7,6 +7,29 @@
     <script>
     window.soundEnabled = {{ auth()->user()->sound_enabled ? 'true' : 'false' }};
 </script>
+
+    <script>
+        window.soundEnabled = {{ auth()->user()->sound_enabled ? 'true' : 'false' }};
+        
+        // Heartbeat Tracker
+        @auth
+        document.addEventListener('DOMContentLoaded', () => {
+            setInterval(() => {
+                // Only ping if the tab is currently visible/active
+                if (document.visibilityState === 'visible') {
+                    fetch('{{ route('heartbeat') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    }).catch(() => {});
+                }
+            }, 60000); // 60,000 ms = 1 minute
+        });
+        @endauth
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'sound_enabled',
         'tier',
         'paused_at',
+        'total_time_spent_seconds'
     ];
 
     protected $hidden = [
@@ -181,5 +182,24 @@ public function resume(): void
     public function isTeacher(): bool
     {
         return $this->role === 'teacher';
+    }
+
+        public function getFormattedTimeSpentAttribute(): string
+    {
+        $seconds = $this->total_time_spent_seconds ?? 0;
+        
+        if ($seconds < 60) {
+            return "{$seconds}s";
+        }
+        
+        $minutes = floor($seconds / 60);
+        if ($minutes < 60) {
+            return "{$minutes}m";
+        }
+        
+        $hours = floor($minutes / 60);
+        $remainingMinutes = $minutes % 60;
+        
+        return "{$hours}h {$remainingMinutes}m";
     }
 }

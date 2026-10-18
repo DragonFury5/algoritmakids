@@ -97,14 +97,24 @@
                             </div>
                         </div>
 
-                        {{-- Stats --}}
-                        <div class="hidden md:flex flex-col items-end gap-1 shrink-0">
-                            <div class="flex items-center gap-1 text-lg font-extrabold">
+                                           {{-- Stats --}}
+                    <div class="hidden md:flex items-center gap-6 shrink-0">
+                        <div class="text-center">
+                            <div class="flex items-center justify-center gap-1 text-lg font-extrabold">
                                 {{ $stats['stars'] }}
                                 <x-lucide-star class="w-4 h-4 text-kid-yellow fill-current" stroke-width="1.5" />
                             </div>
                             <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
                                 {{ app()->getLocale() === 'id' ? 'Bintang' : 'Stars' }}
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex items-center justify-center gap-1 text-lg font-extrabold">
+                                {{ $child->formatted_time_spent }}
+                            </div>
+                            <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold flex items-center gap-1">
+                                <x-lucide-clock class="w-3 h-3" stroke-width="2.5" />
+                                {{ app()->getLocale() === 'id' ? 'Waktu' : 'Time' }}
                             </div>
                         </div>
                     </div>
