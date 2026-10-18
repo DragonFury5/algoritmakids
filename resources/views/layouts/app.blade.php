@@ -11,7 +11,7 @@
     <script>
         window.soundEnabled = {{ auth()->user()->sound_enabled ? 'true' : 'false' }};
         
-        // Heartbeat Tracker
+              // Heartbeat Tracker
         @auth
         document.addEventListener('DOMContentLoaded', () => {
             setInterval(() => {
@@ -22,10 +22,11 @@
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
+                        },
+                        body: JSON.stringify({ seconds: 10 }) // Send 10 seconds
                     }).catch(() => {});
                 }
-            }, 60000); // 60,000 ms = 1 minute
+            }, 10000); // 10,000 ms = 10 seconds
         });
         @endauth
     </script>

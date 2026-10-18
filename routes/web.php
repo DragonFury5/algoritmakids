@@ -62,14 +62,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/parent/child/{child}', ParentChildShow::class)->name('parent.child.show');
 });
 
-          Route::post('/heartbeat', function () {
+         Route::post('/heartbeat', function (\Illuminate\Http\Request $request) {
         $user = auth()->user();
-        
         if (! $user) {
             return response()->json(['error' => 'No user logged in'], 401);
         }
 
-        $user->increment('total_time_spent_seconds', 60);
+        $seconds = $request->input('seconds', 10); // Default to 10
+        $user->increment('total_time_spent_seconds', $seconds);
         
         return response()->json(['status' => 'ok']);
     })->name('heartbeat');
