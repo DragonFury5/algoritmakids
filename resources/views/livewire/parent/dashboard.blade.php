@@ -39,7 +39,7 @@
         </div>
     @else
         {{-- ==================== CHILDREN PATH ==================== --}}
-        <div class="space-y-3">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($children as $child)
                 @php
                     $avatarColors = [
@@ -63,72 +63,49 @@
                     $tierBg = $colorMap[$tierCfg['color']] ?? 'bg-kid-mint';
                 @endphp
 
-               <a href="{{ route('parent.child.show', $child) }}"
-   class="block bg-white rounded-kid border border-gray-200 p-4 md:p-5 card-lift hover:border-kid-blue transition">
-                    <div class="flex items-center gap-3 md:gap-4">
+                <a href="{{ route('parent.child.show', $child) }}"
+                   class="flex flex-col bg-white rounded-kid border border-gray-200 p-5 card-lift hover:border-kid-blue transition">
 
-                        {{-- Avatar --}}
+                    {{-- Header: Avatar & Info --}}
+                    <div class="flex items-center gap-4 mb-5">
                         <div class="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shrink-0"
                              style="background-color: {{ $avatarBg }}">
                             <x-lucide-bot class="w-7 h-7 md:w-8 md:h-8 text-white" stroke-width="2" />
                         </div>
-
-                        {{-- Info --}}
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h3 class="font-extrabold text-base md:text-lg truncate">{{ $child->name }}</h3>
-                                <span class="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded-full text-white {{ $tierBg }}">
-                                    <x-dynamic-component :component="'lucide-' . $tierCfg['icon']" class="w-3 h-3" stroke-width="3" />
-                                    {{ $tierCfg['label_' . app()->getLocale()] }}
-                                </span>
-                            </div>
-                            <p class="text-xs md:text-sm text-gray-500 truncate">{{ $child->email }}</p>
-
-                            {{-- Progress bar --}}
-                            <div class="flex items-center gap-3 mt-2">
-                                <div class="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                                    <div class="h-full bg-kid-blue transition-all duration-500"
-                                         style="width: {{ $stats['percent'] }}%"></div>
-                                </div>
-                                <span class="text-xs font-bold text-gray-500 shrink-0 tabular-nums">
-                                    {{ $stats['levels_completed'] }}/{{ $stats['levels_available'] }}
-                                    <x-lucide-flag class="inline w-3 h-3 -mt-0.5 text-kid-coral" stroke-width="2.5" />
-                                </span>
-                            </div>
-                        </div>
-
-                                           {{-- Stats --}}
-                    <div class="hidden md:flex items-center gap-6 shrink-0">
-                        <div class="text-center">
-                            <div class="flex items-center justify-center gap-1 text-lg font-extrabold">
-                                {{ $stats['stars'] }}
-                                <x-lucide-star class="w-4 h-4 text-kid-yellow fill-current" stroke-width="1.5" />
-                            </div>
-                            <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
-                                {{ app()->getLocale() === 'id' ? 'Bintang' : 'Stars' }}
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="flex items-center justify-center gap-1 text-lg font-extrabold">
-                                {{ $child->formatted_time_spent }}
-                            </div>
-                            <div class="text-[10px] uppercase tracking-wider text-gray-400 font-bold flex items-center gap-1">
-                                <x-lucide-clock class="w-3 h-3" stroke-width="2.5" />
-                                {{ app()->getLocale() === 'id' ? 'Waktu' : 'Time' }}
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Mobile stats --}}
-                    <div class="md:hidden mt-3 flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-1 font-bold text-gray-600">
-                            {{ $stats['stars'] }}
-                            <x-lucide-star class="w-3 h-3 text-kid-yellow fill-current" stroke-width="1.5" />
-                            <span class="text-gray-400 font-normal">
-                                {{ app()->getLocale() === 'id' ? 'bintang' : 'stars' }}
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-extrabold text-lg truncate">{{ $child->name }}</h3>
+                            <p class="text-xs text-gray-500 truncate mb-1">{{ $child->email }}</p>
+                            <span class="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded-full text-white {{ $tierBg }}">
+                                <x-dynamic-component :component="'lucide-' . $tierCfg['icon']" class="w-3 h-3" stroke-width="3" />
+                                {{ $tierCfg['label_' . app()->getLocale()] }}
                             </span>
                         </div>
                     </div>
+
+                    {{-- Progress Bar --}}
+                    <div class="mb-5">
+                        <div class="flex items-center justify-between text-xs font-bold text-gray-500 mb-1.5">
+                            <span>{{ $stats['levels_completed'] }}/{{ $stats['levels_available'] }} {{ app()->getLocale() === 'id' ? 'level' : 'levels' }}</span>
+                            <span>{{ $stats['percent'] }}%</span>
+                        </div>
+                        <div class="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                            <div class="h-full bg-kid-blue transition-all duration-500"
+                                 style="width: {{ $stats['percent'] }}%"></div>
+                        </div>
+                    </div>
+
+                    {{-- Stats Bottom Row --}}
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                        <div class="flex items-center gap-1 text-kid-yellow font-extrabold text-lg">
+                            {{ $stats['stars'] }}
+                            <x-lucide-star class="w-4 h-4 fill-current" stroke-width="1.5" />
+                        </div>
+                        <div class="flex items-center gap-1 text-sm font-extrabold text-gray-500">
+                            <x-lucide-clock class="w-4 h-4 text-gray-400" stroke-width="2.5" />
+                            {{ $child->formatted_time_spent }}
+                        </div>
+                    </div>
+
                 </a>
             @endforeach
         </div>
