@@ -29,20 +29,33 @@
             </div>
 
             <div>
+                      <div>
                 <label class="block font-semibold mb-1">
                     {{ app()->getLocale() === 'id' ? 'Kata Sandi' : 'Password' }}
                 </label>
-                <input type="password" wire:model="password"
-                       class="w-full rounded-kid border-gray-300 focus:border-kid-coral focus:ring-kid-coral">
+                <div x-data="{ show: false }" class="relative">
+                    <input :type="show ? 'text' : 'password'" wire:model="password"
+                           class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue pr-10">
+                    <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <x-lucide-eye x-show="!show" class="w-5 h-5" stroke-width="2" />
+                        <x-lucide-eye-off x-show="show" x-cloak class="w-5 h-5" stroke-width="2" />
+                    </button>
+                </div>
                 @error('password') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
             </div>
 
-            <div>
+                   <div>
                 <label class="block font-semibold mb-1">
                     {{ app()->getLocale() === 'id' ? 'Konfirmasi Kata Sandi' : 'Confirm Password' }}
                 </label>
-                <input type="password" wire:model="password_confirmation"
-                       class="w-full rounded-kid border-gray-300 focus:border-kid-coral focus:ring-kid-coral">
+                <div x-data="{ show: false }" class="relative">
+                    <input :type="show ? 'text' : 'password'" wire:model="password_confirmation"
+                           class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue pr-10">
+                    <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <x-lucide-eye x-show="!show" class="w-5 h-5" stroke-width="2" />
+                        <x-lucide-eye-off x-show="show" x-cloak class="w-5 h-5" stroke-width="2" />
+                    </button>
+                </div>
             </div>
 
             <div>

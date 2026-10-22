@@ -336,32 +336,50 @@
 
                     <form wire:submit="updatePassword" class="space-y-5">
 
-                        <div>
-                            <label class="block font-semibold mb-1 text-sm">
-                                {{ app()->getLocale() === 'id' ? 'Kata Sandi Saat Ini' : 'Current Password' }}
-                            </label>
-                            <input type="password" wire:model="currentPassword"
-                                   class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
-                            @error('currentPassword') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
-                        </div>
+                                <div>
+                <label class="block font-semibold mb-1 text-sm">
+                    {{ app()->getLocale() === 'id' ? 'Kata Sandi Saat Ini' : 'Current Password' }}
+                </label>
+                <div x-data="{ show: false }" class="relative">
+                    <input :type="show ? 'text' : 'password'" wire:model="currentPassword"
+                           class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue pr-10">
+                    <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <x-lucide-eye x-show="!show" class="w-5 h-5" stroke-width="2" />
+                        <x-lucide-eye-off x-show="show" x-cloak class="w-5 h-5" stroke-width="2" />
+                    </button>
+                </div>
+                @error('currentPassword') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
+            </div>
 
-                        <div>
-                            <label class="block font-semibold mb-1 text-sm">
-                                {{ app()->getLocale() === 'id' ? 'Kata Sandi Baru' : 'New Password' }}
-                            </label>
-                            <input type="password" wire:model="newPassword"
-                                   class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
-                            @error('newPassword') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
-                        </div>
+            <div>
+                <label class="block font-semibold mb-1 text-sm">
+                    {{ app()->getLocale() === 'id' ? 'Kata Sandi Baru' : 'New Password' }}
+                </label>
+                <div x-data="{ show: false }" class="relative">
+                    <input :type="show ? 'text' : 'password'" wire:model="newPassword"
+                           class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue pr-10">
+                    <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <x-lucide-eye x-show="!show" class="w-5 h-5" stroke-width="2" />
+                        <x-lucide-eye-off x-show="show" x-cloak class="w-5 h-5" stroke-width="2" />
+                    </button>
+                </div>
+                @error('newPassword') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
+            </div>
 
-                        <div>
-                            <label class="block font-semibold mb-1 text-sm">
-                                {{ app()->getLocale() === 'id' ? 'Konfirmasi Kata Sandi Baru' : 'Confirm New Password' }}
-                            </label>
-                            <input type="password" wire:model="newPassword_confirmation"
-                                   class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue">
-                        </div>
-
+                                    <div>
+                <label class="block font-semibold mb-1 text-sm">
+                    {{ app()->getLocale() === 'id' ? 'Konfirmasi Kata Sandi Baru' : 'Confirm New Password' }}
+                </label>
+                <div x-data="{ show: false }" class="relative">
+                    <input :type="show ? 'text' : 'password'" wire:model="newPassword_confirmation"
+                           class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue pr-10">
+                    <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <x-lucide-eye x-show="!show" class="w-5 h-5" stroke-width="2" />
+                        <x-lucide-eye-off x-show="show" x-cloak class="w-5 h-5" stroke-width="2" />
+                    </button>
+                </div>
+                @error('newPassword_confirmation') <span class="text-kid-coral text-sm">{{ $message }}</span> @enderror
+            </div>
                         <button type="submit" class="btn-kid bg-kid-blue text-white w-full md:w-auto">
                             {{ app()->getLocale() === 'id' ? 'Ubah Kata Sandi' : 'Change Password' }}
                         </button>

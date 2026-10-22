@@ -152,12 +152,18 @@
         @endif
 
         <form wire:submit="resetPassword" class="space-y-4">
-            <div>
+                     <div>
                 <label class="block font-semibold mb-1 text-sm">
                     {{ app()->getLocale() === 'id' ? 'Kata Sandi Baru' : 'New Password' }}
                 </label>
-                <input type="text" wire:model="newPassword" placeholder="min. 6"
-                       class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue font-mono">
+                <div x-data="{ show: false }" class="relative">
+                    <input :type="show ? 'text' : 'password'" wire:model="newPassword" placeholder="min. 6"
+                           class="w-full rounded-kid border-gray-300 focus:border-kid-blue focus:ring-kid-blue font-mono pr-10">
+                    <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <x-lucide-eye x-show="!show" class="w-5 h-5" stroke-width="2" />
+                        <x-lucide-eye-off x-show="show" x-cloak class="w-5 h-5" stroke-width="2" />
+                    </button>
+                </div>
                 @error('newPassword') <span class="text-kid-coral text-xs">{{ $message }}</span> @enderror
             </div>
             <button type="submit" class="btn-kid bg-white border-2 border-gray-200 text-kid-text w-full md:w-auto">
