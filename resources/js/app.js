@@ -80,8 +80,14 @@ document.addEventListener('alpine:init', () => {
                 if (!saved) return;
                 const data = JSON.parse(saved);
                 const program = Array.isArray(data) ? data : data.program;
-                if (Array.isArray(program)) {
-                    this.program = program.filter(b => b && b.type);
+                               if (Array.isArray(program)) {
+                    this.program = program.filter(b => b && b.type).map(b => {
+                        // If it's a container block, make sure it has a body array
+                        if (['loop', 'while_empty', 'while_wall'].includes(b.type) && !Array.isArray(b.body)) {
+                            b.body = [];
+                        }
+                        return b;
+                    });
                 }
                 if (data.focusedContainer) this.focusedContainer = data.focusedContainer;
             } catch (e) {}
@@ -243,9 +249,9 @@ document.addEventListener('alpine:init', () => {
 
             if (won) {
                 this.won = true;
-                const written = this.countWrittenBlocks(this.program);
-                const ratio = written / this.maxBlocks;
-                this.starsEarned = ratio <= 0.5 ? 3 : (ratio <= 0.75 ? 2 : 1);
+               const written = this.countWrittenBlocks(this.program);
+                    // Give 3 stars if they are even slightly efficient, otherwise 2
+                this.starsEarned = written <= (this.maxBlocks - 2) ? 3 : 2;
                 this.clearSaved();
                 await this.$wire.completeLevel(this.starsEarned);
                 this.showWinModal = true;
@@ -359,7 +365,8 @@ document.addEventListener('alpine:init', () => {
                 const ok = await this.execute(block);
                 if (!ok) { this.running = false; this.showFailModal = true; window.sound.fail(); return; }
                 if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
-                    this.starsEarned = this.attempts <= 1 ? 3 : (this.attempts <= 3 ? 2 : 1);
+                    // Give 3 stars if they fix it within 3 tries, otherwise 2
+                    this.starsEarned = this.attempts <= 3 ? 3 : 2;
                     this.won = true; this.running = false; await this.$wire.completeLevel(this.starsEarned);
                     this.showWinModal = true; window.sound.win(); return;
                 }

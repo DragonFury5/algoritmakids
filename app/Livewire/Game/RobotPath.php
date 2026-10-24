@@ -60,6 +60,7 @@ auth()->user()->checkModuleCompletion($this->level->module_id);
     public function render()
     {
         $nextLevel = Level::where('module_id', $this->level->module_id)
+            ->where('tier', $this->level->tier)
             ->where('order', '>', $this->level->order)
             ->orderBy('order')
             ->first();
