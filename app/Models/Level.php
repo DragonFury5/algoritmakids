@@ -60,26 +60,33 @@ public function scopeForTier($query, string $tier)
     return $query->where('tier', $tier);
 }
 
-public function isUnlockedFor($user): bool
+    public function isUnlockedFor($user): bool
 {
     if (! $user) return false;
 
-    // Find the immediately preceding level in the same module and tier
-    $previousLevel = self::where('module_id', $this->module_id)
+    // 1. Find the highest order number that is LESS than this level's order
+    $previousOrder = self::where('module_id', $this->module_id)
         ->where('tier', $this->tier)
         ->where('order', '<', $this->order)
-        ->orderBy('order', 'desc')
-        ->first();
+        ->max('order');
 
-    // If there is no previous level, it's the first one. Always unlocked.
-    if (! $previousLevel) {
+    // 2. If there is no previous order, it's the first level. Always unlocked.
+    if (! $previousOrder) {
         return true;
     }
 
-    // Check if the previous level is completed
-    return $user->progress()
-        ->where('level_id', $previousLevel->id)
+    // 3. Get all levels that share that previous order (handles duplicates)
+    $previousLevelIds = self::where('module_id', $this->module_id)
+        ->where('tier', $this->tier)
+        ->where('order', $previousOrder)
+        ->pluck('id');
+
+    // 4. Check if the user has completed at least one of them
+    $completedCount = $user->progress()
+        ->whereIn('level_id', $previousLevelIds)
         ->whereNotNull('completed_at')
-        ->exists();
+        ->count();
+
+    return $completedCount > 0;
 }
 }

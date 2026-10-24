@@ -74,22 +74,25 @@ document.addEventListener('alpine:init', () => {
             } catch (e) {}
         },
 
-        restoreProgress() {
+             restoreProgress() {
             try {
                 const saved = localStorage.getItem('robotPath:' + this.levelId);
                 if (!saved) return;
                 const data = JSON.parse(saved);
+                
+                // FIXED: Removed the ~ typo
                 const program = Array.isArray(data) ? data : data.program;
-                               if (Array.isArray(program)) {
+                                          
+                if (Array.isArray(program)) {
                     this.program = program.filter(b => b && b.type).map(b => {
-                        // If it's a container block, make sure it has a body array
+                        // Fix old saves that are missing the body array
                         if (['loop', 'while_empty', 'while_wall'].includes(b.type) && !Array.isArray(b.body)) {
                             b.body = [];
                         }
                         return b;
                     });
                 }
-                if (data.focusedContainer) this.focusedContainer = data.focusedContainer;
+                if (data && data.focusedContainer) this.focusedContainer = data.focusedContainer;
             } catch (e) {}
         },
 
@@ -230,7 +233,7 @@ document.addEventListener('alpine:init', () => {
             return n;
         },
 
-        async run() {
+         async run() {
             if (this.running || this.won) return;
             if (this.program.length === 0) {
                 this.showFailModal = true;
@@ -244,16 +247,23 @@ document.addEventListener('alpine:init', () => {
             this.showFailModal = false;
 
             const won = await this.runBlocks(this.program);
-
             this.running = false;
 
-            if (won) {
+                                 if (won) {
                 this.won = true;
-               const written = this.countWrittenBlocks(this.program);
-                    // Give 3 stars if they are even slightly efficient, otherwise 2
+                const written = this.countWrittenBlocks(this.program);
                 this.starsEarned = written <= (this.maxBlocks - 2) ? 3 : 2;
                 this.clearSaved();
-                await this.$wire.completeLevel(this.starsEarned);
+                
+                // Force the save and wait
+                try {
+                    console.log("Trying to save to database...");
+                    await this.$wire.completeLevel(this.starsEarned);
+                    console.log("Save successful!");
+                } catch (error) {
+                    console.error("Database Save Error:", error);
+                }
+                
                 this.showWinModal = true;
                 window.sound.win();
             } else if (!this.showFailModal) {
@@ -263,7 +273,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         async runBlocks(blocks, depth = 0) {
-            if (depth > 10) return false; // Safeguard against infinite loops
+            if (depth > 10) return false; 
             
             for (const block of blocks) {
                 if (this.won || (this.robot.x === this.goal.x && this.robot.y === this.goal.y)) return true;
@@ -276,7 +286,7 @@ document.addEventListener('alpine:init', () => {
                         if (won) return true;
                         if (this.showFailModal) return false;
                     }
-                       } else if (block.type === 'while_empty') {
+                } else if (block.type === 'while_empty') {
                     let safety = 0;
                     while (this.isPathClear() && safety < 50) {
                         const won = await this.runBlocks(block.body, depth + 1);
@@ -300,6 +310,12 @@ document.addEventListener('alpine:init', () => {
                     }
                 }
             }
+            
+            // 👈 THE FIX: Check one last time after all blocks are executed!
+            if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
+                return true;
+            }
+            
             return false;
         },
 
@@ -364,11 +380,22 @@ document.addEventListener('alpine:init', () => {
             for (const block of this.program) {
                 const ok = await this.execute(block);
                 if (!ok) { this.running = false; this.showFailModal = true; window.sound.fail(); return; }
-                if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
-                    // Give 3 stars if they fix it within 3 tries, otherwise 2
+                              if (this.robot.x === this.goal.x && this.robot.y === this.goal.y) {
                     this.starsEarned = this.attempts <= 3 ? 3 : 2;
-                    this.won = true; this.running = false; await this.$wire.completeLevel(this.starsEarned);
-                    this.showWinModal = true; window.sound.win(); return;
+                    this.won = true; 
+                    this.running = false;
+                    
+                    try {
+                        console.log("Trying to save to database...");
+                        await this.$wire.completeLevel(this.starsEarned);
+                        console.log("Save successful!");
+                    } catch (error) {
+                        console.error("Database Save Error:", error);
+                    }
+                    
+                    this.showWinModal = true; 
+                    window.sound.win(); 
+                    return;
                 }
             }
             this.running = false; this.showFailModal = true; window.sound.fail();

@@ -34,32 +34,33 @@ class PatternFixer extends Component
         $this->previousStars = $progress?->stars ?? 0;
     }
 
-    public function completeLevel(int $stars)
-    {
+           public function completeLevel(int $stars) 
+           {
         $stars = max(1, min(3, $stars));
 
-        $progress = Progress::firstOrNew([
-            'user_id' => auth()->id(),
-            'level_id' => $this->level->id,
-        ]);
+        // updateOrCreate guarantees the record is saved
+        $progress = Progress::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'level_id' => $this->level->id,
+            ],
+            [
+                'stars' => $stars,
+                'completed_at' => now(),
+            ]
+        );
 
-        $progress->attempts = ($progress->attempts ?? 0) + 1;
-
-        if ($stars > ($progress->stars ?? 0)) {
-            $progress->stars = $stars;
-        }
-
-        $progress->completed_at = now();
-        $progress->save();
+        // Increment attempts
+        $progress->increment('attempts');
 
         $this->previousStars = $progress->stars;
-        // Check for badge award
-auth()->user()->checkModuleCompletion($this->level->module_id);
+        auth()->user()->checkModuleCompletion($this->level->module_id);
     }
 
     public function render()
     {
         $nextLevel = Level::where('module_id', $this->level->module_id)
+             ->where('tier', $this->level->tier) 
             ->where('order', '>', $this->level->order)
             ->orderBy('order')
             ->first();
