@@ -36,6 +36,72 @@ const SoundEngine = (() => {
 window.sound = SoundEngine;
 
 document.addEventListener('alpine:init', () => {
+    Alpine.store('loader', {
+        visible: false,
+        _showTimer: null,
+        _hideTimer: null,
+        _shownAt: 0,
+        delay: 250,
+        minDuration: 350,
+
+        start() {
+            clearTimeout(this._hideTimer);
+            if (this.visible) return;
+            clearTimeout(this._showTimer);
+            this._showTimer = setTimeout(() => {
+                this.visible = true;
+                this._shownAt = Date.now();
+            }, this.delay);
+        },
+
+        stop() {
+            clearTimeout(this._showTimer);
+            if (!this.visible) return;
+            const elapsed = Date.now() - this._shownAt;
+            const remaining = Math.max(0, this.minDuration - elapsed);
+            clearTimeout(this._hideTimer);
+            this._hideTimer = setTimeout(() => { this.visible = false; }, remaining);
+        },
+    });
+});
+
+// Livewire requests (form saves, wire:click actions, etc.)
+document.addEventListener('livewire:init', () => {
+    Livewire.hook('request', ({ succeed, fail }) => {
+        Alpine.store('loader').start();
+        const done = () => Alpine.store('loader').stop();
+        succeed(done);
+        fail(done);
+    });
+});
+
+// wire:navigate page transitions
+document.addEventListener('livewire:navigating', () => Alpine.store('loader').start());
+document.addEventListener('livewire:navigated',  () => Alpine.store('loader').stop());
+
+// Plain <a> clicks that do a full page load
+document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest('a');
+    if (!a) return;
+    if (a.target === '_blank' || a.hasAttribute('download') || a.hasAttribute('wire:navigate')) return;
+    const href = a.getAttribute('href') || '';
+    if (!href || href.startsWith('#') || /^(mailto:|tel:|javascript:)/.test(href)) return;
+    if (a.origin !== location.origin) return;
+    Alpine.store('loader').start();
+});
+
+// Traditional form posts, such as logging out, also benefit from the same feedback.
+document.addEventListener('submit', (e) => {
+    const form = e.target;
+    if (form.hasAttribute('wire:submit') || form.getAttribute('target') === '_blank') return;
+    Alpine.store('loader').start();
+});
+
+// Back/forward cache restore — always hide
+window.addEventListener('pageshow', () => Alpine.store('loader').stop());
+
+document.addEventListener('alpine:init', () => {
 
     Alpine.data('robotGame', (config) => ({
         windowWidth: window.innerWidth,

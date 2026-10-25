@@ -30,7 +30,6 @@
         });
         @endauth
     </script>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -38,7 +37,7 @@
 
    <nav class="bg-white border-b border-gray-200">
     <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-3">
-        <a href="{{ route('home') }}" class="text-xl md:text-2xl font-extrabold shrink-0">
+       <a href="{{ route('home') }}" wire:navigate class="text-lg md:text-xl font-extrabold shrink-0">
             <span class="text-kid-blue">Algoritma</span><span class="text-kid-mint">Kids</span>
         </a>
 
@@ -70,6 +69,7 @@
         {{ $slot }}
     </main>
 
+    <x-global-loader />
     @livewireScripts
 </body>
 </html>

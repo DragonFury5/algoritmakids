@@ -301,5 +301,7 @@
         </div>
     </footer>
 
+        <x-global-loader />
+
 </body>
 </html>

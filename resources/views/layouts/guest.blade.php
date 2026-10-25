@@ -12,6 +12,7 @@
 </head>
 <body class="bg-kid-bg font-body text-kid-text antialiased min-h-screen">
     {{ $slot }}
+    <x-global-loader />
     @livewireScripts
 </body>
 </html>

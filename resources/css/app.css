@@ -4,6 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
+[x-cloak] { display: none !important; }
+
 @layer base {
     body {
         font-family: 'Nunito', sans-serif;
@@ -30,6 +32,8 @@
     cursor: not-allowed;
     transform: none;
 }
+
+
 
 /* ==================== ANIMATIONS ==================== */
 
