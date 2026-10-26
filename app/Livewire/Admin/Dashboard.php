@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -10,40 +11,58 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class Dashboard extends Component
 {
+    public string $search = '';
+
+    public string $roleFilter = '';
+
     // Edit
     public bool $showEditModal = false;
+
     public ?int $editingId = null;
+
     public string $name = '';
+
     public string $email = '';
+
     public string $avatar = 'robot-blue';
+
     public string $role = 'student';
+
     public string $tier = 'rookie';
+
     public string $newPassword = '';
 
-        // Create
+    // Create
     public bool $showCreateModal = false;
+
     public string $newName = '';
+
     public string $newEmail = '';
+
     public string $newRole = 'teacher'; // Default to teacher since that's what we're adding
+
     public string $newTier = 'rookie';
+
     public string $newAvatar = 'robot-purple';
 
     // View
     public bool $showViewModal = false;
+
     public ?int $viewingId = null;
 
     // Delete
     public bool $showDeleteModal = false;
+
     public ?int $deletingId = null;
 
     protected function rules(): array
     {
         return [
-            'name'        => 'required|string|min:2|max:60',
-            'email'       => 'required|email|unique:users,email,' . ($this->editingId ?? 'NULL'),
-            'avatar'      => 'required|in:robot-blue,robot-green,robot-yellow,robot-coral,robot-purple,robot-mint',
-            'role'        => 'required|in:admin,parent,student',
-            'tier'        => 'required|in:rookie,explorer,pro,hacker',
+            'name' => 'required|string|min:2|max:60',
+            'email' => 'required|email|unique:users,email,'.($this->editingId ?? 'NULL'),
+            'avatar' => 'required|in:robot-blue,robot-green,robot-yellow,robot-coral,robot-purple,robot-mint',
+            'role' => 'required|in:admin,parent,student',
+            'tier' => 'required|in:rookie,explorer,pro,hacker',
             'newPassword' => 'nullable|string|min:8',
         ];
     }
@@ -55,7 +74,7 @@ class Dashboard extends Component
     public function openCreate(): void
     {
         $this->reset(['newName', 'newEmail', 'newPassword', 'newRole', 'newTier', 'newAvatar']);
-        $this->newRole = 'teacher'; 
+        $this->newRole = 'teacher';
         $this->showCreateModal = true;
     }
 
@@ -68,21 +87,21 @@ class Dashboard extends Component
     public function saveCreate(): void
     {
         $this->validate([
-            'newName'     => 'required|string|min:2|max:60',
-            'newEmail'    => 'required|email|unique:users,email',
+            'newName' => 'required|string|min:2|max:60',
+            'newEmail' => 'required|email|unique:users,email',
             'newPassword' => 'required|string|min:8',
-            'newRole'     => 'required|in:admin,parent,student,teacher',
-            'newTier'     => 'required|in:rookie,explorer,pro,hacker',
-            'newAvatar'   => 'required|in:robot-blue,robot-green,robot-yellow,robot-coral,robot-purple,robot-mint',
+            'newRole' => 'required|in:admin,parent,student,teacher',
+            'newTier' => 'required|in:rookie,explorer,pro,hacker',
+            'newAvatar' => 'required|in:robot-blue,robot-green,robot-yellow,robot-coral,robot-purple,robot-mint',
         ]);
 
         User::create([
-            'name'     => $this->newName,
-            'email'    => $this->newEmail,
+            'name' => $this->newName,
+            'email' => $this->newEmail,
             'password' => Hash::make($this->newPassword),
-            'role'     => $this->newRole,
-            'tier'     => $this->newRole === 'student' ? $this->newTier : 'rookie',
-            'avatar'   => $this->newAvatar,
+            'role' => $this->newRole,
+            'tier' => $this->newRole === 'student' ? $this->newTier : 'rookie',
+            'avatar' => $this->newAvatar,
             'language' => 'id',
             'sound_enabled' => true,
         ]);
@@ -94,12 +113,12 @@ class Dashboard extends Component
     public function openEdit(int $id): void
     {
         $user = User::findOrFail($id);
-        $this->editingId   = $user->id;
-        $this->name        = $user->name;
-        $this->email       = $user->email;
-        $this->avatar      = $user->avatar;
-        $this->role        = $user->role;
-        $this->tier        = $user->tier;
+        $this->editingId = $user->id;
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->avatar = $user->avatar;
+        $this->role = $user->role;
+        $this->tier = $user->tier;
         $this->newPassword = '';
         $this->showEditModal = true;
     }
@@ -121,14 +140,15 @@ class Dashboard extends Component
             $this->addError('role', app()->getLocale() === 'id'
                 ? 'Anda tidak dapat mengubah peran Anda sendiri.'
                 : 'You cannot change your own role.');
+
             return;
         }
 
         $data = [
-            'name'   => $this->name,
-            'email'  => $this->email,
+            'name' => $this->name,
+            'email' => $this->email,
             'avatar' => $this->avatar,
-            'role'   => $this->role,
+            'role' => $this->role,
         ];
 
         if ($this->role === 'student') {
@@ -175,7 +195,9 @@ class Dashboard extends Component
 
     public function delete(): void
     {
-        if (! $this->deletingId) return;
+        if (! $this->deletingId) {
+            return;
+        }
 
         $user = User::findOrFail($this->deletingId);
 
@@ -184,6 +206,7 @@ class Dashboard extends Component
                 ? 'Anda tidak dapat menghapus akun Anda sendiri.'
                 : 'You cannot delete yourself.');
             $this->cancelDelete();
+
             return;
         }
 
@@ -196,7 +219,18 @@ class Dashboard extends Component
 
     public function render()
     {
-        $users = User::orderBy('role')->orderBy('name')->get();
+        $search = trim($this->search);
+        $users = User::query()
+            ->when($search !== '', function (Builder $query) use ($search): void {
+                $query->where(function (Builder $query) use ($search): void {
+                    $query->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('email', 'like', '%'.$search.'%');
+                });
+            })
+            ->when($this->roleFilter !== '', function (Builder $query): void {
+                $query->where('role', $this->roleFilter);
+            })
+            ->orderBy('role')->orderBy('name')->get();
 
         // Data for the view modal
         $viewingUser = null;
@@ -210,12 +244,12 @@ class Dashboard extends Component
                 if ($viewingUser->isStudent()) {
                     $progress = $viewingUser->progress()->get();
                     $viewingStats = [
-                        'played'   => $progress->count(),
+                        'played' => $progress->count(),
                         'finished' => $progress->whereNotNull('completed_at')->count(),
                         'mastered' => $progress->where('stars', 3)->count(),
-                        'stars'    => (int) $progress->sum('stars'),
+                        'stars' => (int) $progress->sum('stars'),
                         'attempts' => (int) $progress->sum('attempts'),
-                        'badges'   => $viewingUser->badges()->count(),
+                        'badges' => $viewingUser->badges()->count(),
                     ];
                 } elseif ($viewingUser->isParent()) {
                     $viewingChildren = $viewingUser->children()
@@ -223,8 +257,9 @@ class Dashboard extends Component
                         ->orderBy('name')
                         ->get()
                         ->map(function ($child) {
-                            $child->stars    = (int) $child->progress()->sum('stars');
+                            $child->stars = (int) $child->progress()->sum('stars');
                             $child->finished = $child->progress()->whereNotNull('completed_at')->count();
+
                             return $child;
                         });
                 }
@@ -232,11 +267,12 @@ class Dashboard extends Component
         }
 
         return view('livewire.admin.dashboard', [
-            'users'           => $users,
-            'totalParents'    => User::where('role', 'parent')->count(),
-            'totalStudents'   => User::where('role', 'student')->count(),
-            'viewingUser'     => $viewingUser,
-            'viewingStats'    => $viewingStats,
+            'users' => $users,
+            'totalUsers' => User::count(),
+            'totalParents' => User::where('role', 'parent')->count(),
+            'totalStudents' => User::where('role', 'student')->count(),
+            'viewingUser' => $viewingUser,
+            'viewingStats' => $viewingStats,
             'viewingChildren' => $viewingChildren,
         ]);
     }

@@ -67,7 +67,19 @@ document.addEventListener('alpine:init', () => {
 
 // Livewire requests (form saves, wire:click actions, etc.)
 document.addEventListener('livewire:init', () => {
-    Livewire.hook('request', ({ succeed, fail }) => {
+    Livewire.hook('request', ({ payload, succeed, fail }) => {
+        const onlyUserFilters = payload.components.length > 0 && payload.components.every((component) => {
+            const snapshot = JSON.parse(component.snapshot);
+            const updates = Object.keys(component.updates);
+
+            return snapshot.memo.name === 'admin.dashboard'
+                && component.calls.length === 0
+                && updates.length > 0
+                && updates.every((property) => ['search', 'roleFilter'].includes(property));
+        });
+
+        if (onlyUserFilters) return;
+
         Alpine.store('loader').start();
         const done = () => Alpine.store('loader').stop();
         succeed(done);

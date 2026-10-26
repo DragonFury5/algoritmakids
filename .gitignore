@@ -5,6 +5,7 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+.DESIGN-FOR-AI.md
 /.codex
 /.cursor/
 /.idea

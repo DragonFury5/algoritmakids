@@ -17,8 +17,6 @@
         <span>{{ app()->getLocale() === 'id' ? 'Kelola Modul' : 'Manage Modules' }}</span>
     </a>
             <div class="flex flex-wrap gap-2 w-full md:w-auto">
-            <a href="{{ route('admin.modules') }}" class="...">...</a>
-            <a href="{{ route('admin.levels') }}" class="...">...</a>
             <button wire:click="openCreate" class="btn-kid bg-kid-blue text-white gap-2 flex-1 md:flex-none justify-center">
                 <x-lucide-user-plus class="w-5 h-5" stroke-width="2.5" />
                 <span>{{ app()->getLocale() === 'id' ? 'Tambah Pengguna' : 'Add User' }}</span>
@@ -59,7 +57,7 @@
         </div>
         <div class="bg-white rounded-kid border border-gray-200 p-4 md:p-6 text-center">
             <x-lucide-user-cog class="w-5 h-5 md:w-6 md:h-6 mx-auto text-kid-purple mb-2" stroke-width="2.5" />
-            <div class="text-2xl md:text-4xl font-extrabold text-kid-purple">{{ $users->count() }}</div>
+            <div class="text-2xl md:text-4xl font-extrabold text-kid-purple">{{ $totalUsers }}</div>
             <div class="text-xs md:text-sm text-gray-500">{{ app()->getLocale() === 'id' ? 'Total' : 'Total' }}</div>
         </div>
     </div>
@@ -70,10 +68,48 @@
             <h2 class="font-extrabold">
                 {{ app()->getLocale() === 'id' ? 'Semua Pengguna' : 'All Users' }}
             </h2>
+            <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div class="w-full sm:w-80 sm:max-w-[55%]">
+                    <label for="user-search" class="mb-2 block text-sm font-bold text-kid-text">
+                        {{ app()->getLocale() === 'id' ? 'Cari pengguna' : 'Search users' }}
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <input id="user-search" type="search" wire:model.live.debounce.300ms="search"
+                               placeholder="{{ app()->getLocale() === 'id' ? 'Cari nama atau email' : 'Search by name or email' }}"
+                               class="min-h-11 min-w-0 flex-1 rounded-lg border-[#F0E6D8] bg-kid-bg/40 text-sm text-kid-text placeholder:text-gray-500 focus:border-kid-coral focus:ring-kid-coral">
+                        <div class="flex h-5 w-5 shrink-0 items-center justify-center">
+                            <span wire:loading.delay.inline-flex wire:target="search,roleFilter" role="status">
+                                <svg class="h-5 w-5 animate-spin text-kid-coral motion-reduce:animate-none" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <circle class="opacity-25" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" />
+                                    <path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                                </svg>
+                                <span class="sr-only">{{ app()->getLocale() === 'id' ? 'Mencari pengguna…' : 'Searching users…' }}</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full sm:w-48 sm:shrink-0">
+                    <label for="user-role-filter" class="mb-2 block text-sm font-bold text-kid-text">
+                        {{ app()->getLocale() === 'id' ? 'Urutkan berdasarkan' : 'Sort by' }}
+                    </label>
+                    <select id="user-role-filter" wire:model.live="roleFilter"
+                            class="min-h-11 w-full rounded-lg border-[#F0E6D8] bg-kid-bg/40 text-sm text-kid-text focus:border-kid-coral focus:ring-kid-coral">
+                        <option value="">{{ app()->getLocale() === 'id' ? 'Semua pengguna' : 'All users' }}</option>
+                        <option value="parent">{{ app()->getLocale() === 'id' ? 'Orang tua' : 'Parents' }}</option>
+                        <option value="student">{{ app()->getLocale() === 'id' ? 'Siswa' : 'Students' }}</option>
+                        <option value="teacher">{{ app()->getLocale() === 'id' ? 'Guru' : 'Teachers' }}</option>
+                    </select>
+                </div>
+            </div>
+            <p class="mt-3 text-sm text-gray-600" role="status" aria-live="polite">
+                {{ app()->getLocale() === 'id' ? 'Menampilkan' : 'Showing' }} {{ $users->count() }}
+                {{ app()->getLocale() === 'id' ? 'dari' : 'of' }} {{ $totalUsers }}
+                {{ app()->getLocale() === 'id' ? 'pengguna' : 'users' }}
+            </p>
         </div>
 
         <div class="divide-y divide-gray-100">
-            @foreach($users as $user)
+            @forelse($users as $user)
                 @php
                     $avatarColors = [
                         'robot-blue'   => '#7EC8E3',
@@ -86,7 +122,7 @@
                     $avatarBg = $avatarColors[$user->avatar] ?? '#7EC8E3';
                     $isSelf = $user->id === auth()->id();
                 @endphp
-                <div class="flex items-center gap-3 md:gap-4 p-3 md:p-4 hover:bg-kid-bg/40 transition">
+                <div wire:key="admin-user-{{ $user->id }}" class="flex items-center gap-3 md:gap-4 p-3 md:p-4 hover:bg-kid-bg/40 transition">
                     {{-- Avatar --}}
                     <div class="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shrink-0"
                          style="background-color: {{ $avatarBg }}">
@@ -133,7 +169,16 @@
                         @endif
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="flex flex-col gap-2 p-6 md:p-8">
+                    <h3 class="font-semibold text-kid-text">
+                        {{ app()->getLocale() === 'id' ? 'Tidak ada pengguna yang cocok.' : 'No matching users.' }}
+                    </h3>
+                    <p class="text-sm text-gray-600">
+                        {{ app()->getLocale() === 'id' ? 'Coba nama atau email lain, atau pilih semua pengguna.' : 'Try another name or email, or select all users.' }}
+                    </p>
+                </div>
+            @endforelse
         </div>
     </div>
 
