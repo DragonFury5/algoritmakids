@@ -68,7 +68,9 @@ document.addEventListener('alpine:init', () => {
 // Livewire requests (form saves, wire:click actions, etc.)
 document.addEventListener('livewire:init', () => {
     Livewire.hook('request', ({ payload, succeed, fail }) => {
-        const onlyUserFilters = payload.components.length > 0 && payload.components.every((component) => {
+        const requestPayload = typeof payload === 'string' ? JSON.parse(payload) : payload;
+        const components = requestPayload?.components ?? [];
+        const onlyUserFilters = components.length > 0 && components.every((component) => {
             const snapshot = JSON.parse(component.snapshot);
             const updates = Object.keys(component.updates);
 

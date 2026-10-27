@@ -73,11 +73,11 @@
                     <label for="user-search" class="mb-2 block text-sm font-bold text-kid-text">
                         {{ app()->getLocale() === 'id' ? 'Cari pengguna' : 'Search users' }}
                     </label>
-                    <div class="flex items-center gap-3">
-                        <input id="user-search" type="search" wire:model.live.debounce.300ms="search"
+                    <div class="flex items-center gap-3" x-data="{ searchText: @js($search) }">
+                        <input id="user-search" type="search" wire:model.live.debounce.300ms="search" x-model="searchText"
                                placeholder="{{ app()->getLocale() === 'id' ? 'Cari nama atau email' : 'Search by name or email' }}"
                                class="min-h-11 min-w-0 flex-1 rounded-lg border-[#F0E6D8] bg-kid-bg/40 text-sm text-kid-text placeholder:text-gray-500 focus:border-kid-coral focus:ring-kid-coral">
-                        <div class="flex h-5 w-5 shrink-0 items-center justify-center">
+                        <div class="flex h-5 w-5 shrink-0 items-center justify-center" :class="{ 'invisible': searchText.trim().length === 0 }">
                             <span wire:loading.delay.inline-flex wire:target="search,roleFilter" role="status">
                                 <svg class="h-5 w-5 animate-spin text-kid-coral motion-reduce:animate-none" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                     <circle class="opacity-25" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" />
